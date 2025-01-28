@@ -1,0 +1,13 @@
+{
+  "name": "ensf401finalproject",
+  "scripts": {
+    "dev": "concurrently -k \"cd frontend && npm run dev\" \"cd backend && mvnw.cmd spring-boot:run\"",
+    "dev:client": "cd frontend && npm rn dev",
+    "dev:server": "cd backend && mvnw.cmd spring-boot:run",
+    "build": "npm rn --cwd frontend build && cd backend && mvnw.cmd package",
+    "start": "concurrently \"cd frontend && npm rn install\" \"cd backend && mvnw.cmd clean install\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
