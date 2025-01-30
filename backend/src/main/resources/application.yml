@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: endless-odyssey
+
+  datasource:
+    url: jdbc:postgresql://aws-0-us-west-1.pooler.supabase.com:5432/postgres
+    username: ${SUPABASE_USERNAME}
+    password: ${SUPABASE_PASSWORD}
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 8080
