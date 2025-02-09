@@ -1,0 +1,46 @@
+name: Docker Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      docker:
+        image: docker:19.03.12
+        options: --privileged
+        ports:
+          - 8080:8080
+          - 3000:3000
+
+    steps:
+      # Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Docker Buildx for multi-platform support
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Build backend and frontend containers using Docker Compose
+      - name: Build Docker images
+        run: |
+          docker-compose -f docker-compose.yml build
+
+      # Optionally test the containers (e.g., test health or basic start)
+      - name: Run Docker Compose
+        run: |
+          docker-compose -f docker-compose.yml up -d
+          docker-compose -f docker-compose.yml ps
+          
+      # Optionally, stop the containers after the test
+      - name: Stop and clean up containers
+        run: |
+          docker-compose -f docker-compose.yml down
