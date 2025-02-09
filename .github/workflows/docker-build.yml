@@ -20,6 +20,12 @@ jobs:
           - 8080:8080
           - 3000:3000
 
+    env:
+      SUPABASE_USERNAME: ${{ secrets.SUPABASE_USERNAME }}
+      SUPABASE_PASSWORD: ${{ secrets.SUPABASE_PASSWORD }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
     steps:
       # Checkout repository
       - name: Checkout code
@@ -28,6 +34,13 @@ jobs:
       # Set up Docker Buildx for multi-platform support
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+
+      # Install Docker Compose
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.17.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose --version  # Check if installation was successful
 
       # Build backend and frontend containers using Docker Compose
       - name: Build Docker images
@@ -39,7 +52,7 @@ jobs:
         run: |
           docker-compose -f docker-compose.yml up -d
           docker-compose -f docker-compose.yml ps
-          
+
       # Optionally, stop the containers after the test
       - name: Stop and clean up containers
         run: |
