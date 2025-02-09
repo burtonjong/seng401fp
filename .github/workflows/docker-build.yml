@@ -20,6 +20,12 @@ jobs:
           - 8080:8080
           - 3000:3000
 
+    env:
+      SUPABASE_USERNAME: ${{ secrets.SUPABASE_USERNAME }}
+      SUPABASE_PASSWORD: ${{ secrets.SUPABASE_PASSWORD }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
     steps:
       # Checkout repository
       - name: Checkout code
