@@ -1,11 +1,7 @@
-setup:
-  config:
-    SUPABASE_USERNAME: ${SUPABASE_USERNAME}
-    SUPABASE_PASSWORD: ${SUPABASE_PASSWORD}
-    NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
-
 build:
+  config:
+    NEXT_PUBLIC_SUPABASE_URL: https://tggrmzgjdgibmzptqbhd.supabase.co
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRnZ3JtemdqZGdpYm16cHRxYmhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgwOTQzMTUsImV4cCI6MjA1MzY3MDMxNX0.chNBAteJt-5yjyIpzBSDvRosUUH4es1KXliAzIiuhDo
   docker:
     backend: backend/Dockerfile
     web: frontend/Dockerfile
