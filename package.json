@@ -2,10 +2,12 @@
   "name": "ensf401finalproject",
   "scripts": {
     "dev": "concurrently -k \"cd frontend && npm run dev\" \"cd backend && ./mvnw spring-boot:run\"",
+
     "dev:windows": "concurrently -k \"cd frontend && npm run dev\" \"cd backend && mvnw.cmd spring-boot:run\"",
     "dev:client": "cd frontend && npm run dev",
     "dev:server": "cd backend && mvnw.cmd spring-boot:run",
     "dev:windows-server": "cd backend && ./mvnw spring-boot:run",
+
     "build": "npm run --cwd frontend build && cd backend && mvnw.cmd package",
     "start": "concurrently \"cd frontend && npm run install\" \"cd backend && mvnw.cmd clean install\""
   },

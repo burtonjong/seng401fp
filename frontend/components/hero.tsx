@@ -1,29 +1,24 @@
+"use client";
+
+import { motion } from "framer-motion";
+
 export default function Header() {
   return (
-    <div className="flex flex-col gap-16 items-center">
-      <div className="flex gap-8 justify-center items-center"></div>
-      <h1 className="sr-only">Template</h1>
-      <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center">
-        The fastest way to build apps with{" "}
-        <a
-          href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-          target="_blank"
-          className="font-bold hover:underline"
-          rel="noreferrer"
-        >
-          test
-        </a>{" "}
-        and{" "}
-        <a
-          href="https://nextjs.org/"
-          target="_blank"
-          className="font-bold hover:underline"
-          rel="noreferrer"
-        >
-          sss
-        </a>
-      </p>
-      <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
+    <div className="flex flex-col gap-4 pt-12 w-full items-center">
+      <motion.h1
+        className="mt-10 text-4xl font-bold tracking-tight text-foreground sm:text-6xl"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <span className="text-gradient">Endless Odyssey</span>
+      </motion.h1>
+      <motion.div
+        className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.4 }}
+      ></motion.div>
     </div>
   );
 }
