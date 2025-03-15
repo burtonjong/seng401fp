@@ -30,7 +30,7 @@ npm run dev
 
 ## Tech Stack
 
-- **Front-End**: React, TypeScript, Tailwind CSS, ShadCN
+- **Front-End**: React, TypeScript, Tailwind CSS, ShadC
 - **Back-End**: Java, Spring Boot
 - **Database**: Supabase
 - **LLM Provider**: OpenAI
