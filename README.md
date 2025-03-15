@@ -23,6 +23,6 @@ EndlessOdyssey is a never-ending, AI-driven adventure game that dynamically gene
 
 ### Prerequisites
 Ensure you have the following installed:
-- Node.js
+- Node.js (Newer versions may cause errors because util._extend API is deprecated. We use v20.11.1 which works)
 - Java (JDK 17)
 - Docker (optional, for containerized deployment)
