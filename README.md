@@ -2,6 +2,24 @@
 
 EndlessOdyssey is a never-ending, AI-driven adventure game that dynamically generates stories based on player interactions. Powered by the OpenAI API, the game creates unique narratives where every decision shapes the journey, making each playthrough a personalized experience.
 
+## Running the preview
+
+#### Scripts for windows:
+
+```bash
+yarn dev:windows
+or
+npm run dev:windows
+```
+
+#### Scripts for mac/linux:
+
+```bash
+yarn dev
+or
+npm run dev
+```
+
 ## Features
 
 - **AI-Generated Storylines** – The game adapts to your choices, crafting unique narratives on the fly.
@@ -22,7 +40,9 @@ EndlessOdyssey is a never-ending, AI-driven adventure game that dynamically gene
 ## Getting Started
 
 ### Prerequisites
+
 Ensure you have the following installed:
-- Node.js (Newer versions may cause errors because util._extend API is deprecated. We use v20.11.1 which works)
+
+- Node.js (Newer versions may cause errors because util.\_extend API is deprecated. We use v20.11.1 which works)
 - Java (JDK 17)
 - Docker (optional, for containerized deployment)
