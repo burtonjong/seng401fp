@@ -99,35 +99,6 @@ export default function HomeChatArea() {
           <ArrowUpCircle className="h-5 w-5" />
         </Button>
       </div>
-
-      <style jsx global>{`
-  body {
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
-  }
-  
-  @keyframes pulse {
-    0%, 100% {
-      opacity: 0.4;
-    }
-    50% {
-      opacity: 1;
-    }
-  }
-  
-  .delay-0 {
-    animation-delay: 0ms;
-  }
-  
-  .delay-300 {
-    animation-delay: 300ms;
-  }
-  
-  .delay-600 {
-    animation-delay: 600ms;
-  }
-`}</style>
     </div>
   )
 }
