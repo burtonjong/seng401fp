@@ -1,4 +1,8 @@
-export default function HomeHero() {
+interface HomeHeroProps {
+  username: string;
+}
+
+export default function HomeHero({ username }: HomeHeroProps) {
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-4 overflow-auto">
       <h1 className="text-4xl font-medium">
@@ -7,7 +11,7 @@ export default function HomeHero() {
         </span>
         <span className="bg-gradient-to-r from-[var(--gradient-6)] to-[var(--gradient-7)] bg-clip-text text-transparent">
           {" "}
-          (Insert Name Here)
+          {username}
         </span>
       </h1>
     </div>

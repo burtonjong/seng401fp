@@ -134,3 +134,14 @@ export const signOutAction = async () => {
   await supabase.auth.signOut();
   return redirect("/sign-in");
 };
+
+export const getUsername = async () => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const username = user ? user.user_metadata?.username || "Guest" : "Guest"; 
+
+  return username;
+};
