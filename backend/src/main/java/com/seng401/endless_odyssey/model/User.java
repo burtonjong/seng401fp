@@ -1,9 +1,10 @@
 package com.seng401.endless_odyssey.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -14,67 +15,43 @@ public class User {
     private Long id;
 
     @NotNull
-    @Size(min = 3, max = 50)
-    @Column(nullable = false)
-    private String name;
-
-    @NotNull
-    @Size(min = 8)
-    @Column(nullable = false)
-    private String password;
-
-    @NotNull
     @Email
-    @Size(min = 5, max = 100)
     @Column(nullable = false, unique = true)
     private String email;
 
+    @NotNull
+    @Column(nullable = false)
+    private String username;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "user")
+    private List<Story> stories;
+
     public User() {}
-
-    public User(String name, String password, String email) {
-        this.name = name;
-        this.password = password;
+    public User(String email, String username) {
         this.email = email;
+        this.username = username;
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public String getName() {
-        return name;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public String getPassword() {
-        return password;
-    }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
-    }
+    public List<Story> getStories() { return stories; }
+    public void setStories(List<Story> stories) { this.stories = stories; }
+    
 }
