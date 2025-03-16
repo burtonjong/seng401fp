@@ -18,7 +18,7 @@ export default async function Main() {
   if (!user) {
     return redirect("/sign-in");
   }
-  
+
   const username = await getUsername();
 
   return (
