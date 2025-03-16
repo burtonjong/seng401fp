@@ -1,60 +1,70 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useRef, useEffect } from "react"
-import { generateStoryline } from "@/utils/gemini/generate-response"
-import { Button } from "@/components/ui/button"
-import { Plus, ArrowUpCircle } from "lucide-react"
-import HomeHero from "@/components/home/homehero" 
+import type React from "react";
+import { useState, useRef, useEffect } from "react";
+import { generateStoryline } from "@/utils/gemini/generate-response";
+import { Button } from "@/components/ui/button";
+import { Plus, ArrowUpCircle } from "lucide-react";
+import HomeHero from "@/components/home/homehero";
 
-export default function HomeChatArea() {
-  const [messages, setMessages] = useState<{ role: string; content: string }[]>([])
-  const [input, setInput] = useState("")
-  const [loading, setLoading] = useState(false)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+export default function HomeChatArea({ username }: { username: string }) {
+  const [messages, setMessages] = useState<{ role: string; content: string }[]>(
+    []
+  );
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+    scrollToBottom();
+  }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!input.trim()) return
+    if (!input.trim()) return;
 
-    const newMessages = [...messages, { role: "user", content: input }]
-    setMessages(newMessages)
-    setLoading(true)
+    const newMessages = [...messages, { role: "user", content: input }];
+    setMessages(newMessages);
+    setLoading(true);
 
-    const geminiResponse = await generateStoryline(newMessages)
+    const geminiResponse = await generateStoryline(newMessages);
 
     if (geminiResponse) {
-      setMessages([...newMessages, { role: "assistant", content: geminiResponse }])
+      setMessages([
+        ...newMessages,
+        { role: "assistant", content: geminiResponse },
+      ]);
     }
-    setLoading(false)
-    setInput("")
-  }
+    setLoading(false);
+    setInput("");
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      handleSendMessage()
+      e.preventDefault();
+      handleSendMessage();
     }
-  }
+  };
 
   return (
     <div className="h-screen flex flex-col p-4 overflow-hidden max-h-screen">
-      {messages.length === 0 && <HomeHero />}
+      {messages.length === 0 && <HomeHero username={username} />}
 
       <div className="flex-1 overflow-y-auto mb-4 pr-4">
         <div className="flex flex-col space-y-4 w-full pr-4">
           {messages.map((message, index) => (
-            <div key={index} className={`flex ${message.role === "user" ? "justify-end mr-2" : "justify-start"}`}>
+            <div
+              key={index}
+              className={`flex ${message.role === "user" ? "justify-end mr-2" : "justify-start"}`}
+            >
               <div
                 className={`max-w-xs p-3 rounded-xl ${
-                  message.role === "user" ? "bg-[#4A90E2] text-white" : "bg-[#333] text-white"
+                  message.role === "user"
+                    ? "bg-[#4A90E2] text-white"
+                    : "bg-[#333] text-white"
                 }`}
               >
                 {message.content}
@@ -100,5 +110,5 @@ export default function HomeChatArea() {
         </Button>
       </div>
     </div>
-  )
+  );
 }

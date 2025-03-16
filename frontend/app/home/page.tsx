@@ -26,8 +26,7 @@ export default async function Main() {
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden h-full">
         <HomeHeader />
-        <HomeHero username={username} />
-        <HomeChatArea />
+        <HomeChatArea username={username} />
       </div>
     </div>
   );
