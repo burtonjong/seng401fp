@@ -46,7 +46,6 @@ export default function HomeChatArea() {
 
   return (
     <div className="h-screen flex flex-col p-4 overflow-hidden max-h-screen">
-      {/* Conditionally render HomeHero if messages are empty */}
       {messages.length === 0 && <HomeHero />}
 
       <div className="flex-1 overflow-y-auto mb-4 pr-4">

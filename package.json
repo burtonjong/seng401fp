@@ -11,8 +11,5 @@
   },
   "devDependencies": {
     "concurrently": "^8.2.0"
-  },
-  "dependencies": {
-    "@google/generative-ai": "^0.24.0"
   }
 }
