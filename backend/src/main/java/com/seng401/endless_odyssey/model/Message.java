@@ -16,7 +16,6 @@ public class Message {
 
     @ManyToOne
     @JoinColumn(name = "story_id", referencedColumnName = "id")
-    @Column(nullable = false)
     private Story story;
 
     @Column(nullable = false)
