@@ -23,4 +23,9 @@ public class UserController {
     public List<User> getUsers() {
         return userRepository.findAll();
     }
+
+    @PostMapping
+    public User createUser(@RequestBody User user) {
+        return userRepository.save(user);
+    }
 }
