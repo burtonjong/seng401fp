@@ -54,4 +54,14 @@ public class User {
     public List<Story> getStories() { return stories; }
     public void setStories(List<Story> stories) { this.stories = stories; }
     
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
 }

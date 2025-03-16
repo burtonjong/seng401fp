@@ -11,15 +11,24 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "story_id", referencedColumnName = "id")
+    @Column(nullable = false)
     private Story story;
 
+    @Column(nullable = false)
     private String role;
 
+    @Column(nullable = false)
     private String content;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     public Message() {}
 

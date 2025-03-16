@@ -12,6 +12,7 @@ public class Story {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @ManyToOne
@@ -19,7 +20,13 @@ public class Story {
     private User user;
 
     @OneToMany(mappedBy = "story")
+    @Column(nullable = false)
     private List<Message> messages;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     public Story() {}
     public Story(User user) { this.user = user; }
