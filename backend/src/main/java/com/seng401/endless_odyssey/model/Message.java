@@ -15,7 +15,7 @@ public class Message {
     private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "story_id", referencedColumnName = "id")
+    @JoinColumn(name = "story_id", referencedColumnName = "id", nullable = false)
     private Story story;
 
     @Column(nullable = false)
