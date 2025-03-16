@@ -6,6 +6,7 @@ import Sidebar from "@/components/home/sidebar";
 import HomeHeader from "@/components/home/homeheader";
 import HomeHero from "@/components/home/homehero";
 import HomeChatArea from "@/components/home/homechatarea";
+import { getUsername } from "../actions";
 
 export default async function Main() {
   const supabase = await createClient();
@@ -17,13 +18,15 @@ export default async function Main() {
   if (!user) {
     return redirect("/sign-in");
   }
+  
+  const username = await getUsername();
 
   return (
     <div className="fixed inset-0 flex bg-black text-white">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden h-full">
         <HomeHeader />
-        <HomeHero />
+        <HomeHero username={username} />
         <HomeChatArea />
       </div>
     </div>
