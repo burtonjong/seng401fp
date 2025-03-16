@@ -141,7 +141,7 @@ export const getUsername = async () => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const username = user.user_metadata?.username || "Guest"; 
+  const username = user ? user.user_metadata?.username || "Guest" : "Guest"; 
 
   return username;
 };
