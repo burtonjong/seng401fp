@@ -1,16 +1,38 @@
+"use client";
+
+import { useEffect } from "react";
+import { gsap } from "gsap";
+
 interface HomeHeroProps {
   username: string;
 }
 
 export default function HomeHero({ username }: HomeHeroProps) {
+
+  useEffect(() => {
+    
+    const textElements = document.querySelectorAll(".split-text");
+
+    textElements.forEach((element) => {
+      const text = element.textContent || "";
+      element.innerHTML = text
+        .split("")
+        .map((char) => `<span class="char">${char}</span>`)
+        .join("");
+
+      const chars = element.querySelectorAll(".char");
+
+      gsap.fromTo(chars, {opacity: 0}, {opacity: 1, duration: 1, stagger: 0.05});
+});
+  }, []);
+
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-4 overflow-auto">
       <h1 className="text-4xl font-medium">
-        <span className="bg-gradient-to-r from-[var(--gradient-5)] to-[var(--gradient-6)] bg-clip-text text-transparent">
-          Hello,
-        </span>
-        <span className="bg-gradient-to-r from-[var(--gradient-6)] to-[var(--gradient-7)] bg-clip-text text-transparent">
-          {" "}
+        <span
+          className="split-text bg-gradient-to-r from-[var(--gradient-6)] to-[var(--gradient-7)] bg-clip-text text-transparent"
+        >
+          {"Hello, "}
           {username}
         </span>
       </h1>

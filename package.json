@@ -11,5 +11,11 @@
   },
   "devDependencies": {
     "concurrently": "^8.2.0"
+  },
+  "dependencies": {
+    "gsap": "^3.12.7",
+    "react-fade-in": "^2.0.1",
+    "split-type": "^0.3.4",
+    "text-animations-react": "^0.1.8"
   }
 }
