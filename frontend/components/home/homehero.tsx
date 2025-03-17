@@ -10,15 +10,14 @@ interface HomeHeroProps {
 export default function HomeHero({ username }: HomeHeroProps) {
 
   useEffect(() => {
-    
+
     const textElements = document.querySelectorAll(".split-text");
 
     textElements.forEach((element) => {
+
       const text = element.textContent || "";
-      element.innerHTML = text
-        .split("")
-        .map((char) => `<span class="char">${char}</span>`)
-        .join("");
+      
+      element.innerHTML = text.split("").map((char) => `<span class="char">${char}</span>`).join("");
 
       const chars = element.querySelectorAll(".char");
 
