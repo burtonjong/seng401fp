@@ -11,8 +11,5 @@
   },
   "devDependencies": {
     "concurrently": "^8.2.0"
-  },
-  "dependencies": {
-    "gsap": "^3.12.7"
   }
 }
