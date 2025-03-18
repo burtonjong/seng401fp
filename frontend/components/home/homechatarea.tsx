@@ -84,6 +84,8 @@ export default function HomeChatArea({ username }: { username: string }) {
     let lastAnimation = null;
 
     textElements.forEach((element, index) => {
+      // if the message has already been animated, go to the next
+
       if (alreadyAnimated.current.has(index)) return;
 
       const text = element.textContent || "";
