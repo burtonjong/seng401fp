@@ -6,14 +6,14 @@ import { generateStoryline } from "@/utils/gemini/generate-response";
 import { Button } from "@/components/ui/button";
 import { Plus, ArrowUpCircle } from "lucide-react";
 import HomeHero from "@/components/home/homehero";
+import { gsap } from "gsap";
 
 export default function HomeChatArea({ username }: { username: string }) {
-  const [messages, setMessages] = useState<{ role: string; content: string }[]>(
-    []
-  );
+  const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const alreadyAnimated = useRef<Set<number>>(new Set()); // temporary storage to keep track of messages that were already animated, can probably be replaced lating by checking in the database
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -49,6 +49,27 @@ export default function HomeChatArea({ username }: { username: string }) {
     }
   };
 
+  useEffect(() => {
+    
+    const textElements = document.querySelectorAll(".assistant-message");
+
+    textElements.forEach((element, index) => {
+
+      // if the message has already been animated, go to the next
+      if (alreadyAnimated.current.has(index)) return;
+
+      const text = element.textContent || "";
+
+      element.innerHTML = text.split("").map((char) => `<span class="char">${char}</span>`).join("");
+
+      const chars = element.querySelectorAll(".char");
+
+      gsap.fromTo(chars, { opacity: 0 }, { opacity: 1, duration: 0.25, stagger: 0.01});
+
+      alreadyAnimated.current.add(index); // add it to the message that is already animated
+    });
+  }, [messages]);
+
   return (
     <div className="h-screen flex flex-col p-4 overflow-hidden max-h-screen">
       {messages.length === 0 && <HomeHero username={username} />}
@@ -65,7 +86,7 @@ export default function HomeChatArea({ username }: { username: string }) {
                   message.role === "user"
                     ? "bg-[#4A90E2] text-white"
                     : "bg-[#333] text-white"
-                }`}
+                } ${message.role === "assistant" ? "assistant-message" : ""}`}
               >
                 {message.content}
               </div>
