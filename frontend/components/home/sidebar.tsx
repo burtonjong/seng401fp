@@ -8,6 +8,36 @@ import { ListFilter, Menu, Plus, LogOut } from "lucide-react";
 // import { Settings } from "lucide-react";
 
 import { signOutAction } from "@/app/actions";
+import { getUserDetails } from "@/app/actions";
+import { createStory } from "@/api/stories/mutations";
+
+
+export const createStoryForUser = async () => {
+  const user = await getUserDetails();
+  if (user) {
+    try {
+      const newStory = await createStory({ user });
+      console.log("Story created successfully");
+      return newStory;
+    } catch (error) {
+      console.error("Error creating story:", error);
+      return {
+        error: {
+          message: `Error creating story: ${error}`,
+        },
+        statusCode: 500,
+      };
+    }
+  } else {
+    console.error("No user is logged in");
+    return {
+      error: {
+        message: "No user is logged in",
+      },
+      statusCode: 400,
+    };
+  }
+};
 
 export default function Sidebar() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -30,6 +60,7 @@ export default function Sidebar() {
         <Button
           variant="ghost"
           className={`w-full justify-start gap-3 rounded-full bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white ${!sidebarOpen && "justify-center"}`}
+          onClick={createStoryForUser}
         >
           <Plus className="h-5 w-5" />
           {sidebarOpen && <span>New chat</span>}

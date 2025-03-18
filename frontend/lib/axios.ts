@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+  baseURL: "http://localhost:8080",
   headers: {
     "Content-Type": "application/json",
   },
