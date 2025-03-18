@@ -1,81 +1,81 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useRef, useEffect } from "react"
-import { generateStoryline } from "@/utils/gemini/generate-response"
-import { Button } from "@/components/ui/button"
-import { Plus, ArrowUpCircle } from "lucide-react"
-import HomeHero from "@/components/home/homehero"
-import { gsap } from "gsap"
+import type React from "react";
+import { useState, useRef, useEffect } from "react";
+import { generateStoryline } from "@/utils/gemini/generate-response";
+import { Button } from "@/components/ui/button";
+import { Plus, ArrowUpCircle } from "lucide-react";
+import HomeHero from "@/components/home/homehero";
+import { gsap } from "gsap";
 
 export default function HomeChatArea({ username }: { username: string }) {
-  const [messages, setMessages] = useState<{ role: string; content: string }[]>([])
-  const [input, setInput] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [choices, setChoices] = useState<string[]>([])
-  const messagesEndRef = useRef<HTMLDivElement>(null)
-  const alreadyAnimated = useRef<Set<number>>(new Set()) // temporary storage to keep track of messages that were already animated
+  const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [choices, setChoices] = useState<string[]>([]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const alreadyAnimated = useRef<Set<number>>(new Set()); // temporary storage to keep track of messages that were already animated
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+    scrollToBottom();
+  }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!input.trim()) return
+    if (!input.trim()) return;
 
-    const newMessages = [...messages, { role: "user", content: input }]
-    setMessages(newMessages)
-    setLoading(true)
+    const newMessages = [...messages, { role: "user", content: input }];
+    setMessages(newMessages);
+    setLoading(true);
 
-    const geminiResponse = await generateStoryline(newMessages)
+    const geminiResponse = await generateStoryline(newMessages);
 
     if (geminiResponse) {
-      const assistantMessage = geminiResponse.response
-      const assistantChoices = [geminiResponse.choice1, geminiResponse.choice2, geminiResponse.choice3]
+      const assistantMessage = geminiResponse.response;
+      const assistantChoices = [geminiResponse.choice1, geminiResponse.choice2, geminiResponse.choice3];
 
-      setMessages([...newMessages, { role: "assistant", content: assistantMessage }])
-      setChoices(assistantChoices)
+      setMessages([...newMessages, { role: "assistant", content: assistantMessage }]);
+      setChoices(assistantChoices);
     }
-    setLoading(false)
-    setInput("")
-  }
+    setLoading(false);
+    setInput("");
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      handleSendMessage()
+      e.preventDefault();
+      handleSendMessage();
     }
-  }
+  };
 
   const handleOptionClick = (option: string) => {
-    setInput(option)
-    handleSendMessage()
-  }
+    setInput(option);
+    handleSendMessage();
+  };
 
   useEffect(() => {
-    const textElements = document.querySelectorAll(".assistant-message")
+    const textElements = document.querySelectorAll(".assistant-message");
 
     textElements.forEach((element, index) => {
-      if (alreadyAnimated.current.has(index)) return
+      if (alreadyAnimated.current.has(index)) return;
 
-      const text = element.textContent || ""
+      const text = element.textContent || "";
 
       element.innerHTML = text
         .split("")
         .map((char) => `<span class="char">${char}</span>`)
-        .join("")
+        .join("");
 
-      const chars = element.querySelectorAll(".char")
+      const chars = element.querySelectorAll(".char");
 
-      gsap.fromTo(chars, { opacity: 0 }, { opacity: 1, duration: 0.25, stagger: 0.01 })
+      gsap.fromTo(chars, { opacity: 0 }, { opacity: 1, duration: 0.25, stagger: 0.01 });
 
-      alreadyAnimated.current.add(index)
-    })
-  }, [messages])
+      alreadyAnimated.current.add(index);
+    });
+  }, [messages]);
 
   return (
     <div className="h-screen flex flex-col p-4 overflow-hidden max-h-screen">
@@ -105,22 +105,21 @@ export default function HomeChatArea({ username }: { username: string }) {
             </div>
           )}
 
-            {!loading && choices.length > 0 && (
+          {!loading && choices.length > 0 && (
             <div className="flex flex-col space-y-2 w-full">
-                {choices.map((choice, index) => (
+              {choices.map((choice, index) => (
                 <div key={index} className="flex justify-start w-full max-w-xs">
-                    <Button
+                  <Button
                     onClick={() => handleOptionClick(choice)}
                     className="w-full text-left p-3 rounded-xl bg-[#333] text-white whitespace-normal break-words h-auto min-h-[40px]"
                     variant="ghost"
-                    >
+                  >
                     {choice}
-                    </Button>
+                  </Button>
                 </div>
-                ))}
+              ))}
             </div>
-            )}
-
+          )}
 
           <div ref={messagesEndRef} />
         </div>
@@ -150,6 +149,5 @@ export default function HomeChatArea({ username }: { username: string }) {
         </Button>
       </div>
     </div>
-  )
+  );
 }
-
