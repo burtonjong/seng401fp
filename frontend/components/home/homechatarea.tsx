@@ -9,7 +9,9 @@ import HomeHero from "@/components/home/homehero";
 import { gsap } from "gsap";
 
 export default function HomeChatArea({ username }: { username: string }) {
-  const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
+  const [messages, setMessages] = useState<{ role: string; content: string }[]>(
+    []
+  );
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -50,21 +52,26 @@ export default function HomeChatArea({ username }: { username: string }) {
   };
 
   useEffect(() => {
-    
     const textElements = document.querySelectorAll(".assistant-message");
 
     textElements.forEach((element, index) => {
-
       // if the message has already been animated, go to the next
       if (alreadyAnimated.current.has(index)) return;
 
       const text = element.textContent || "";
 
-      element.innerHTML = text.split("").map((char) => `<span class="char">${char}</span>`).join("");
+      element.innerHTML = text
+        .split("")
+        .map((char) => `<span class="char">${char}</span>`)
+        .join("");
 
       const chars = element.querySelectorAll(".char");
 
-      gsap.fromTo(chars, { opacity: 0 }, { opacity: 1, duration: 0.25, stagger: 0.01});
+      gsap.fromTo(
+        chars,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.25, stagger: 0.01 }
+      );
 
       alreadyAnimated.current.add(index); // add it to the message that is already animated
     });

@@ -2,14 +2,12 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Clock,
-  HelpCircle,
-  ListFilter,
-  Menu,
-  Plus,
-  Settings,
-} from "lucide-react";
+import { ListFilter, Menu, Plus, LogOut } from "lucide-react";
+
+// only if we decide to have settings
+// import { Settings } from "lucide-react";
+
+import { signOutAction } from "@/app/actions";
 
 export default function Sidebar() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -54,26 +52,20 @@ export default function Sidebar() {
       </div>
 
       <div className="mt-auto px-4 py-4 space-y-1">
-        <Button
-          variant="ghost"
-          className={`w-full justify-start gap-3 py-2 text-[#e0e0e0] hover:bg-[#2a2a2a] relative ${!sidebarOpen && "justify-center"}`}
-        >
-          <HelpCircle className="h-5 w-5" />
-          {sidebarOpen && <span>Help</span>}
-        </Button>
-        <Button
-          variant="ghost"
-          className={`w-full justify-start gap-3 py-2 text-[#e0e0e0] hover:bg-[#2a2a2a] ${!sidebarOpen && "justify-center"}`}
-        >
-          <Clock className="h-5 w-5" />
-          {sidebarOpen && <span>Activity</span>}
-        </Button>
-        <Button
+        {/* <Button
           variant="ghost"
           className={`w-full justify-start gap-3 py-2 text-[#e0e0e0] hover:bg-[#2a2a2a] relative ${!sidebarOpen && "justify-center"}`}
         >
           <Settings className="h-5 w-5" />
           {sidebarOpen && <span>Settings</span>}
+        </Button> */}
+        <Button
+          variant="ghost"
+          className={`w-full justify-start gap-3 py-2 text-[#e0e0e0] hover:bg-[#2a2a2a] relative ${!sidebarOpen && "justify-center"}`}
+          onClick={signOutAction}
+        >
+          <LogOut className="h-5 w-5" />
+          {sidebarOpen && <span>Logout</span>}
         </Button>
       </div>
     </div>
