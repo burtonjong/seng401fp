@@ -19,3 +19,9 @@ export interface Message{
     role: string
     content: string
 }
+
+export interface UserDetails{
+    id: string
+    username: string
+    email?: string
+}

@@ -4,6 +4,7 @@ import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { UserDetails } from "@/types/types";
 
 export const signUpAction = async (formData: FormData) => {
   const username = formData.get("username")?.toString();
@@ -144,4 +145,17 @@ export const getUsername = async () => {
   const username = user ? user.user_metadata?.username || "Guest" : "Guest"; 
 
   return username;
+};
+
+export const getUserDetails = async (): Promise<UserDetails | null> => {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return null;
+
+  return {
+    id: user.id,
+    username: user.user_metadata?.username,
+    email: user.email,
+  };
 };
