@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Edit, Save, Calendar, Mail } from "lucide-react";
 import { useState } from "react";
 import { type User } from "@supabase/supabase-js";
+import { createClient } from "@/utils/supabase/client";
 
 export default function UserDetails({
   user,
@@ -20,17 +21,33 @@ export default function UserDetails({
   user: User;
   username: string;
 }) {
+  const supabaseClient = createClient();
   const [isEditing, setIsEditing] = useState(false);
   const [usernameState, setUsername] = useState(username);
 
   const handleSave = async () => {
+    try {
+      const { error } = await supabaseClient
+        .from("users")
+        .update({ username: usernameState })
+        .eq("id", user.id);
+
+      if (error) {
+        throw error;
+      }
+    } catch (error) {
+      console.error("Error updating username:", error);
+    }
+
     setIsEditing(false);
   };
+
+  console.log(username);
 
   const parsedDate = new Date(user.created_at).toDateString();
 
   return (
-    <Card className="md:col-span-1 flex flex-col justify-center items-center">
+    <Card className="md:col-span-1 flex flex-col justify-center items-center w-1/2">
       <CardHeader className="flex flex-col items-center text-center pb-2">
         <CardDescription>
           {isEditing ? (

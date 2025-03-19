@@ -20,8 +20,8 @@ export default async function ProfilePage() {
   const username = await getUsername();
 
   return (
-    <div className="container mx-auto py-8 px-4 w-[75dvw]">
-      <div className="flex flex-row justify-between mb-4 items-center ">
+    <div className="container mx-auto py-8 px-4 w-[75dvw] flex items-center flex-col">
+      <div className="flex flex-row justify-between w-1/2 mb-4 items-center ">
         <h1 className="text-3xl font-bold">My Profile</h1>
         <Button>
           <Link href="/home">
@@ -30,7 +30,7 @@ export default async function ProfilePage() {
         </Button>
       </div>
 
-      <div className="flex flex-col w-full gap-4">
+      <div className="flex flex-col items-center w-full gap-4">
         <UserDetails user={user} username={username} />
         <Stats />
       </div>
