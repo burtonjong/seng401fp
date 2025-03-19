@@ -56,6 +56,14 @@ export default function Sidebar() {
     router.push("/home/profile");
   };
 
+  const handleSwitchStory = (params:{storyID:string}) => {
+    router.push(`/stories/${params.storyID}`);
+  };
+
+  const handleNewChat = () => {
+    router.push("/home"); 
+  };
+  
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [stories, setStories] = useState<{ id: string; title: string }[]>([]);
 
@@ -117,6 +125,7 @@ export default function Sidebar() {
               <Button
                 variant="ghost"
                 className={`w-full justify-start gap-3 py-2 text-[#e0e0e0] hover:bg-[#2a2a2a] ${!sidebarOpen && "justify-center"}`}
+                onClick={() => handleSwitchStory({ storyID: story.id })}
               >
                 <ListFilter className="h-5 w-5 flex-shrink-0" />
                 {sidebarOpen && (

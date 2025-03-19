@@ -8,20 +8,21 @@ import { ArrowUpCircle, X, Eye, EyeClosed } from "lucide-react";
 import HomeHero from "@/components/home/homehero";
 import { gsap } from "gsap";
 import { cn } from "@/lib/utils";
+import { getUserDetails } from "@/app/actions";
+import { createStory } from "@/api/stories/mutations";
 import { createMessage } from "@/api/stories/mutations";
+import { redirect } from "next/navigation";
 
 export default function HomeChatArea({ username }: { username: string }) {
-  const [messages, setMessages] = useState<{ role: string; content: string }[]>(
-    []
-  );
+  const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [choices, setChoices] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const alreadyAnimated = useRef<Set<number>>(new Set()); // temporary storage to keep track of messages that were already animated
   const [showChoicesPopup, setShowChoicesPopup] = useState(false);
-  const storyID = "130c9233-cae2-4251-83f3-bc2479e43835"; // placeholder
-
+  const [storyID, setStoryID] = useState<string | null>(null); // To track the current story ID
+  
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -30,50 +31,130 @@ export default function HomeChatArea({ username }: { username: string }) {
     scrollToBottom();
   }, [messages]);
 
-
   const handleSendMessage = async (inputOption?: string) => {
     const messageContent = inputOption || input;
     if (!messageContent.trim()) return;
-
+  
     const newMessages = [
       ...messages,
       { role: "user", content: messageContent },
     ];
-
-    try{
-        const newMessage = await createMessage({ storyID: storyID, role: "user", content: messageContent });
-        console.log(newMessage);
-      }catch(error){
-        console.error("Error creating message:", error);
-    }
+  
     setMessages(newMessages);
     setLoading(true);
+  
+    if (messages.length === 0) {
+      const user = await getUserDetails();
+      if (user) {
+        try {
+          const newStory = await createStory({ user });
+          console.log("Story creation response:", newStory);
+  
+          if (newStory.success) {
+            setStoryID(newStory.story.id);
+            window.history.pushState(null, "", `/stories/${newStory.story.id}`);
+  
 
-    const geminiResponse = await generateStoryline(newMessages); 
+            try {
+              await createMessage({
+                storyID: newStory.story.id,
+                role: "user",
+                content: messageContent,
+              });
+            } catch (error) {
+              console.error("Error saving initial message:", error);
+            }
+  
+            const geminiResponse = await generateStoryline(newMessages);
+  
+            if (geminiResponse) {
+              const assistantMessage = geminiResponse.response;
+              const assistantChoices = [
+                geminiResponse.choice1,
+                geminiResponse.choice2,
+                geminiResponse.choice3,
+              ];
+  
+              try {
+                await createMessage({
+                  storyID: newStory.story.id, 
+                  role: "assistant",
+                  content: assistantMessage,
+                });
+                console.log("Assistant message created");
+              } catch (error) {
+                console.error("Error creating assistant message:", error);
+              }
+  
+              setMessages([
+                ...newMessages,
+                { role: "assistant", content: assistantMessage },
+              ]);
+              setChoices(assistantChoices);
+            }
+          } else {
+            console.error("Error creating story:", newStory.error.message);
+            return {
+              error: {
+                message: `Error creating story: ${newStory.error.message}`,
+              },
+              statusCode: newStory.statusCode,
+            };
+          }
+        } catch (error) {
+          console.error("Error user not found:", error);
+          return {
+            error: {
+              message: `User not found: ${error}`,
+            },
+            statusCode: 500,
+          };
+        }
+      }
+    } else if (storyID) {
+      try {
+        await createMessage({
+          storyID,
+          role: "user",
+          content: messageContent,
+        });
+        console.log("User message saved");
+      } catch (error) {
+        console.error("Error saving user message:", error);
+      }
 
-    if (geminiResponse) {
-      const assistantMessage = geminiResponse.response;
-      const assistantChoices = [
-        geminiResponse.choice1,
-        geminiResponse.choice2,
-        geminiResponse.choice3,
-      ];
-      try{
-        const geminiMessage = await createMessage({ storyID: storyID, role: "assistant", content: assistantMessage });
-        console.log(geminiMessage);
-      }catch(error){
-        console.error("Error creating message:", error);
-    }   
-
+      const geminiResponse = await generateStoryline(newMessages);
+  
+      if (geminiResponse) {
+        const assistantMessage = geminiResponse.response;
+        const assistantChoices = [
+          geminiResponse.choice1,
+          geminiResponse.choice2,
+          geminiResponse.choice3,
+        ];
+  
+        try {
+          await createMessage({
+            storyID,
+            role: "assistant",
+            content: assistantMessage,
+          });
+          console.log("Assistant message saved");
+        } catch (error) {
+          console.error("Error creating assistant message:", error);
+        }
+  
         setMessages([
-            ...newMessages,
-            { role: "assistant", content: assistantMessage },
+          ...newMessages,
+          { role: "assistant", content: assistantMessage },
         ]);
         setChoices(assistantChoices);
-        }
-        setLoading(false);
-        setInput(""); // Clear the input after sending the message
-    };
+      }
+    }
+  
+    setLoading(false);
+    setInput("");
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -84,7 +165,6 @@ export default function HomeChatArea({ username }: { username: string }) {
 
   const handleOptionClick = (option: string) => {
     setInput(option);
-
     setShowChoicesPopup(false);
 
     setTimeout(() => {
@@ -98,8 +178,6 @@ export default function HomeChatArea({ username }: { username: string }) {
     let lastAnimation = null;
 
     textElements.forEach((element, index) => {
-      // if the message has already been animated, go to the next
-
       if (alreadyAnimated.current.has(index)) return;
 
       const text = element.textContent || "";
@@ -119,7 +197,6 @@ export default function HomeChatArea({ username }: { username: string }) {
           duration: 0.25,
           stagger: 0.01,
           onComplete: () => {
-            // Show the popup only when animation is fully done
             if (index === textElements.length - 1) {
               setShowChoicesPopup(true);
             }
@@ -143,11 +220,7 @@ export default function HomeChatArea({ username }: { username: string }) {
               className={`flex ${message.role === "user" ? "justify-end mr-2" : "justify-start"}`}
             >
               <div
-                className={`max-w-lg p-3 rounded-xl ${
-                  message.role === "user"
-                    ? "bg-[#4A90E2] text-white"
-                    : "bg-[#333] text-white"
-                } ${message.role === "assistant" ? "assistant-message" : ""}`}
+                className={`max-w-lg p-3 rounded-xl ${message.role === "user" ? "bg-[#4A90E2] text-white" : "bg-[#333] text-white"} ${message.role === "assistant" ? "assistant-message" : ""}`}
               >
                 {message.content}
               </div>
