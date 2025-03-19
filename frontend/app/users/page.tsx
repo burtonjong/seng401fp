@@ -1,5 +1,5 @@
 export default async function Users() {
-  const response = await fetch("http://localhost:8080/api/stories/user", {
+  const response = await fetch("http://localhost:8080/users", {
     method: "GET",
   });
 

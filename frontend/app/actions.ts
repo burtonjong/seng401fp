@@ -143,19 +143,18 @@ export const getUsername = async () => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data, error } = await supabase
-    .from("users")
-    .select("username")
-    .eq("id", user?.id)
-    .single();
+  if (!user) return null;
 
-  if (error) {
-    console.error("Error fetching user:", error);
-  } else {
-    console.log("User:", data);
+  try {
+    const response = await fetch(`https://localhost:8080/users/${user.id}`);
+    if (!response.ok) throw new Error("Could not fetch username");
+
+    const data = await response.json();
+    return data?.username;
+  } catch (error) {
+    console.error("Error fetching username:", error);
+    return null;
   }
-
-  return data?.username;
 };
 
 export const getUserDetails = async (): Promise<UserDetails | null> => {
@@ -166,11 +165,20 @@ export const getUserDetails = async (): Promise<UserDetails | null> => {
 
   if (!user) return null;
 
-  return {
-    id: user.id,
-    username: user.user_metadata?.username,
-    email: user.email,
-  };
+  try {
+    const response = await fetch(`http://localhost:8080/users/${user.id}`);
+    if (!response.ok) throw new Error("Could not fetch user details");
+
+    const data = await response.json();
+    return {
+      id: data.id,
+      username: data.username,
+      email: data.email,
+    };
+  } catch (error) {
+    console.error("Error fetching user details:", error);
+    return null;
+  }
 };
 
 export const getUserStories = async (): Promise<Story[] | null> => {
@@ -179,15 +187,29 @@ export const getUserStories = async (): Promise<Story[] | null> => {
 
   if (!user) return null;
 
-  const { data: stories} = await supabase.from("stories").select("*").eq("user_id", user.id); 
-  
-  return stories;
+  try {
+    const response = await fetch(`http://localhost:8080/users/${user.id}/stories`);
+    if (!response.ok) throw new Error("Could not fetch user's stories");
+
+    const data = await response.json();
+    return data as Story[];
+  } catch (error) {
+    console.error("Error fetching user's stories:", error);
+    return null;
+  }
 };
 
 export const deleteStory = async (storyId: string): Promise<boolean> => {
-  const supabase = await createClient();
+  try {
+    const response = await fetch(`http://localhost:8080/stories/${storyId}`, {
+      method: "DELETE",
+    });
 
-  const {data} = await supabase.from("stories").delete().eq("id", storyId) as { data: { id: string }[] | null;};
+    if (!response.ok) throw new Error("Could not delete story");
 
-  return true;
+    return true;
+  } catch (error) {
+    console.error("Error deleting story:", error);
+    return false;
+  }
 };
