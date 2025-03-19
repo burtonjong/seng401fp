@@ -59,7 +59,7 @@ export default function HomeChatArea({ username }: { username: string }) {
         geminiResponse.choice3,
       ];
       try{
-        const geminiMessage = await createMessage({ storyID: storyID, role: "assistant", content: "Hello" });
+        const geminiMessage = await createMessage({ storyID: storyID, role: "assistant", content: assistantMessage });
         console.log(geminiMessage);
       }catch(error){
         console.error("Error creating message:", error);
