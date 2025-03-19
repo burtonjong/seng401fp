@@ -8,7 +8,7 @@ import * as React from 'react'
 export default async function StoryPage({params,}: {params: { storyid: string };}) {
   const supabase = createClient();
 
-  const { storyid } = await params;
+  const { storyid } = params;
 
   const { data: { user } } = await (await supabase).auth.getUser();
 
