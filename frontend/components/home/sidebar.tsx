@@ -8,6 +8,7 @@ import { ListFilter, Menu, Plus, LogOut, User } from "lucide-react";
 import { signOutAction } from "@/app/actions";
 import { getUserDetails, getUserStories, deleteStory } from "@/app/actions";
 import { createStory } from "@/api/stories/mutations";
+import { useRouter } from "next/navigation";
 
 export const createStoryForUser = async (
   setStories: React.Dispatch<
@@ -72,9 +73,11 @@ export default function Sidebar() {
   }, []);
 
   const handleDeleteStory = async (storyId: string) => {
-    const success = await deleteStory(storyId); 
+    const success = await deleteStory(storyId);
     if (success) {
-      setStories((prevStories) => prevStories.filter((story) => story.id !== storyId));
+      setStories((prevStories) =>
+        prevStories.filter((story) => story.id !== storyId)
+      );
     }
   };
 
@@ -122,7 +125,7 @@ export default function Sidebar() {
               </Button>
               <button
                 className="ml-2 text-white hover:text-white"
-                onClick={() => handleDeleteStory(story.id)} 
+                onClick={() => handleDeleteStory(story.id)}
               >
                 <span className="text-xl">&times;</span>
               </button>
