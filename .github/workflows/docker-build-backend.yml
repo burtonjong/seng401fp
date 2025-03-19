@@ -1,4 +1,4 @@
-name: Docker Build and Test
+name: Docker Build and Test for Backend
 
 on:
   push:
@@ -42,10 +42,10 @@ jobs:
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version  # Check if installation was successful
 
-      # Build backend and frontend containers using Docker Compose
-      - name: Build Docker images
+      # Build backend Docker container using Dockerfile in backend folder
+      - name: Build Docker image for backend
         run: |
-          docker-compose -f docker-compose.yml build
+          docker-compose -f docker-compose.yml build backend
 
       # Optionally test the containers (e.g., test health or basic start)
       - name: Run Docker Compose
