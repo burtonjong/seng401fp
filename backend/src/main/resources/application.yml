@@ -6,6 +6,7 @@ spring:
     url: jdbc:postgresql://aws-0-us-west-1.pooler.supabase.com:5432/postgres
     username: ${SUPABASE_USERNAME}
     password: ${SUPABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
