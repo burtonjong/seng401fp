@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { generateStoryline } from "@/utils/gemini/generate-response";
+import { generateStoryline} from "@/utils/gemini/generate-response";
 import { Button } from "@/components/ui/button";
 import { ArrowUpCircle, X } from "lucide-react";
 import { gsap } from "gsap";
@@ -35,9 +35,14 @@ export default function StoryChatPage({ storyID }: { storyID: string }) {
             content: msg.content,
           }))
         );
-
-        if (sortedMessages.length > 0) {
-          handleGeminiResponse(sortedMessages);
+    
+        if (sortedMessages.length > 0) {  
+          if(sortedMessages[sortedMessages.length - 1].role === "assistant"){
+            handleGeminiOptions(sortedMessages);
+          }
+          if(sortedMessages[sortedMessages.length - 1].role === "user"){
+            handleGeminiResponse(sortedMessages);
+          }
         }
       }
     };
@@ -45,47 +50,73 @@ export default function StoryChatPage({ storyID }: { storyID: string }) {
     fetchMessages();
   }, [storyID]);
 
-const handleOptionClick = async (option: string) => {
-  const newMessages = [...messages, { role: "user", content: option }];
-  setMessages(newMessages);
-  setShowChoicesPopup(false);
-
-  await handleGeminiResponse(newMessages);
-};
-
-const handleGeminiResponse = async (currentMessages: { role: string; content: string }[]) => {
-  setLoading(true);
-
-  try {
-    const userMessage = currentMessages[currentMessages.length - 1];
-    if (userMessage) {
-      await createMessage({ storyID, role: "user", content: userMessage.content });
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+  
+  const handleOptionClick = async (option: string) => {
+    const newMessages = [...messages, { role: "user", content: option }];
+    setMessages(newMessages);
+    setShowChoicesPopup(false);
+    try {
+      await createMessage({ storyID, role: "user", content: option });
+    } catch (error) {
+      console.error("Error saving user message:", error);
     }
-
-    const geminiResponse = await generateStoryline(currentMessages);
-
-    if (geminiResponse) {
-      const assistantMessage = geminiResponse.response;
-      const assistantChoices = [
-        geminiResponse.choice1,
-        geminiResponse.choice2,
-        geminiResponse.choice3,
-      ];
-
-      await createMessage({ storyID, role: "assistant", content: assistantMessage });
-
-      setMessages([
-        ...currentMessages,
-        { role: "assistant", content: assistantMessage },
-      ]);
-      setChoices(assistantChoices);
+  
+    await handleGeminiResponse(newMessages);
+  };
+  
+  const handleGeminiResponse = async (currentMessages: { role: string; content: string }[]) => {
+    setLoading(true);
+  
+    try {
+      const geminiResponse = await generateStoryline(currentMessages);
+  
+      if (geminiResponse) {
+        const assistantMessage = geminiResponse.response;
+        const assistantChoices = [
+          geminiResponse.choice1,
+          geminiResponse.choice2,
+          geminiResponse.choice3,
+        ];
+  
+        await createMessage({ storyID, role: "assistant", content: assistantMessage });
+  
+        setMessages([
+          ...currentMessages,
+          { role: "assistant", content: assistantMessage },
+        ]);
+        setChoices(assistantChoices);
+      }
+    } catch (error) {
+      console.error("Error during Gemini response:", error);
     }
-  } catch (error) {
-    console.error("Error during Gemini response:", error);
-  }
-
-  setLoading(false);
-};
+  
+    setLoading(false);
+  };
+  
+  const handleGeminiOptions = async (currentMessages: { role: string; content: string }[]) => {
+    setLoading(true);
+  
+    try {
+      const geminiResponse = await generateStoryline(currentMessages);
+  
+      if (geminiResponse) {
+        const assistantChoices = [
+          geminiResponse.choice1,
+          geminiResponse.choice2,
+          geminiResponse.choice3,
+        ];
+  
+        setChoices(assistantChoices);
+      }
+    } catch (error) {
+      console.error("Error during Gemini response:", error);
+    }
+  
+    setLoading(false);
+  };
 
   useEffect(() => {
     const textElements = document.querySelectorAll(".assistant-message");
