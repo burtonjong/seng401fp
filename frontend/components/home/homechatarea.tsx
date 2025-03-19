@@ -30,6 +30,16 @@ export default function HomeChatArea({ username }: { username: string }) {
     scrollToBottom();
   }, [messages]);
 
+  const shortenString = (str: string, maxLength: number) => {
+    return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
+  };
+  
+  const longString = "This is a very long string that needs to be shortened.";
+  const shortString = shortenString(longString, 20);
+  
+  console.log(shortString); // "This is a very long..."
+  
+
   const handleSendMessage = async (inputOption?: string) => {
     const messageContent = inputOption || input;
     if (!messageContent.trim()) return;
