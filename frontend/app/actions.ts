@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { UserDetails } from "@/types/types";
+import { Story } from "@/types/types";
 
 export const signUpAction = async (formData: FormData) => {
   const username = formData.get("username")?.toString();
@@ -170,4 +171,23 @@ export const getUserDetails = async (): Promise<UserDetails | null> => {
     username: user.user_metadata?.username,
     email: user.email,
   };
+};
+
+export const getUserStories = async (): Promise<Story[] | null> => {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return null;
+
+  const { data: stories} = await supabase.from("stories").select("*").eq("user_id", user.id); 
+  
+  return stories;
+};
+
+export const deleteStory = async (storyId: string): Promise<boolean> => {
+  const supabase = await createClient();
+
+  const {data} = await supabase.from("stories").delete().eq("id", storyId) as { data: { id: string }[] | null;};
+
+  return true;
 };

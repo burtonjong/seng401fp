@@ -8,6 +8,7 @@ import { ArrowUpCircle, X, Eye, EyeClosed } from "lucide-react";
 import HomeHero from "@/components/home/homehero";
 import { gsap } from "gsap";
 import { cn } from "@/lib/utils";
+import { createMessage } from "@/api/stories/mutations";
 
 export default function HomeChatArea({ username }: { username: string }) {
   const [messages, setMessages] = useState<{ role: string; content: string }[]>(
@@ -19,6 +20,7 @@ export default function HomeChatArea({ username }: { username: string }) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const alreadyAnimated = useRef<Set<number>>(new Set()); // temporary storage to keep track of messages that were already animated
   const [showChoicesPopup, setShowChoicesPopup] = useState(false);
+  const storyID = "130c9233-cae2-4251-83f3-bc2479e43835"; // placeholder
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -28,7 +30,6 @@ export default function HomeChatArea({ username }: { username: string }) {
     scrollToBottom();
   }, [messages]);
 
-  console.log(input);
 
   const handleSendMessage = async (inputOption?: string) => {
     const messageContent = inputOption || input;
@@ -38,10 +39,17 @@ export default function HomeChatArea({ username }: { username: string }) {
       ...messages,
       { role: "user", content: messageContent },
     ];
+
+    try{
+        const newMessage = await createMessage({ storyID: storyID, role: "user", content: messageContent });
+        console.log(newMessage);
+      }catch(error){
+        console.error("Error creating message:", error);
+    }
     setMessages(newMessages);
     setLoading(true);
 
-    const geminiResponse = await generateStoryline(newMessages);
+    const geminiResponse = await generateStoryline(newMessages); 
 
     if (geminiResponse) {
       const assistantMessage = geminiResponse.response;
@@ -50,16 +58,22 @@ export default function HomeChatArea({ username }: { username: string }) {
         geminiResponse.choice2,
         geminiResponse.choice3,
       ];
+      try{
+        const geminiMessage = await createMessage({ storyID: storyID, role: "assistant", content: assistantMessage });
+        console.log(geminiMessage);
+      }catch(error){
+        console.error("Error creating message:", error);
+    }   
 
-      setMessages([
-        ...newMessages,
-        { role: "assistant", content: assistantMessage },
-      ]);
-      setChoices(assistantChoices);
-    }
-    setLoading(false);
-    setInput(""); // Clear the input after sending the message
-  };
+        setMessages([
+            ...newMessages,
+            { role: "assistant", content: assistantMessage },
+        ]);
+        setChoices(assistantChoices);
+        }
+        setLoading(false);
+        setInput(""); // Clear the input after sending the message
+    };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
