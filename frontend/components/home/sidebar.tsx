@@ -2,10 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ListFilter, Menu, Plus, LogOut } from "lucide-react";
+
+import { ListFilter, Menu, Plus, LogOut, User } from "lucide-react";
+
 import { signOutAction } from "@/app/actions";
 import { getUserDetails, getUserStories, deleteStory } from "@/app/actions";
 import { createStory } from "@/api/stories/mutations";
+import { useRouter } from "next/navigation";
 
 export const createStoryForUser = async (
   setStories: React.Dispatch<
@@ -47,6 +50,12 @@ export const createStoryForUser = async (
 };
 
 export default function Sidebar() {
+  const router = useRouter();
+
+  const handleProfile = () => {
+    router.push("/home/profile");
+  };
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [stories, setStories] = useState<{ id: string; title: string }[]>([]);
 
@@ -64,9 +73,11 @@ export default function Sidebar() {
   }, []);
 
   const handleDeleteStory = async (storyId: string) => {
-    const success = await deleteStory(storyId); 
+    const success = await deleteStory(storyId);
     if (success) {
-      setStories((prevStories) => prevStories.filter((story) => story.id !== storyId));
+      setStories((prevStories) =>
+        prevStories.filter((story) => story.id !== storyId)
+      );
     }
   };
 
@@ -114,7 +125,7 @@ export default function Sidebar() {
               </Button>
               <button
                 className="ml-2 text-white hover:text-white"
-                onClick={() => handleDeleteStory(story.id)} 
+                onClick={() => handleDeleteStory(story.id)}
               >
                 <span className="text-xl">&times;</span>
               </button>
@@ -128,6 +139,14 @@ export default function Sidebar() {
       </div>
 
       <div className="mt-auto px-4 py-4 space-y-1">
+        <Button
+          variant="ghost"
+          className={`w-full justify-start gap-3 py-2 text-[#e0e0e0] hover:bg-[#2a2a2a] relative ${!sidebarOpen && "justify-center"}`}
+          onClick={handleProfile}
+        >
+          <User className="h-5 w-5" />
+          {sidebarOpen && <span>Profile</span>}
+        </Button>
         <Button
           variant="ghost"
           className={`w-full justify-start gap-3 py-2 text-[#e0e0e0] hover:bg-[#2a2a2a] relative ${!sidebarOpen && "justify-center"}`}

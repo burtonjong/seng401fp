@@ -143,14 +143,26 @@ export const getUsername = async () => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const username = user ? user.user_metadata?.username || "Guest" : "Guest"; 
+  const { data, error } = await supabase
+    .from("users")
+    .select("username")
+    .eq("id", user?.id)
+    .single();
 
-  return username;
+  if (error) {
+    console.error("Error fetching user:", error);
+  } else {
+    console.log("User:", data);
+  }
+
+  return data?.username;
 };
 
 export const getUserDetails = async (): Promise<UserDetails | null> => {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) return null;
 

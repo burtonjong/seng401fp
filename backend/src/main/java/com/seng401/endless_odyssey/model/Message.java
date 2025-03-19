@@ -3,6 +3,7 @@ package com.seng401.endless_odyssey.model;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,6 +25,7 @@ public class Message {
     private LocalDateTime createdAt;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "story_id", referencedColumnName = "id", nullable = false)
     private Story story;
 

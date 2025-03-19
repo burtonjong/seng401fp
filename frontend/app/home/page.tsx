@@ -1,12 +1,9 @@
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Sidebar from "@/components/home/sidebar";
-import HomeHeader from "@/components/home/homeheader";
-import HomeHero from "@/components/home/homehero";
 import HomeChatArea from "@/components/home/homechatarea";
 import { getUsername } from "../actions";
+import HomeHeader from "@/components/home/homeheader";
 
 export default async function Main() {
   const supabase = await createClient();
