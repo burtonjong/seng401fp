@@ -20,7 +20,7 @@ export default function HomeChatArea({ username }: { username: string }) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const alreadyAnimated = useRef<Set<number>>(new Set()); // temporary storage to keep track of messages that were already animated
   const [showChoicesPopup, setShowChoicesPopup] = useState(false);
-  const storyID = "05bff06c-a8fd-4c48-b1cd-e4da818a7abf"; // placeholder
+  const storyID = "130c9233-cae2-4251-83f3-bc2479e43835"; // placeholder
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
