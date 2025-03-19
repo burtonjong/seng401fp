@@ -1,15 +1,14 @@
-// app/stories/[storyID]/page.tsx
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import Sidebar from "@/components/home/sidebar";
 import HomeHeader from "@/components/home/homeheader";
 import StoryChatPage from "@/components/stories/storychatarea";
 
-export default async function StoryPage({
-  params,
-}: {
+type Props = {
   params: { storyid: string };
-}) {
+};
+
+export default async function StoryPage({ params }: Props) {
   const supabase = await createClient();
 
   const {
