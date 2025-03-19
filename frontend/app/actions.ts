@@ -146,7 +146,7 @@ export const getUsername = async () => {
     .from("users")
     .select("username")
     .eq("id", user?.id)
-    .single(); // Ensures only one object is returned
+    .single();
 
   if (error) {
     console.error("Error fetching user:", error);

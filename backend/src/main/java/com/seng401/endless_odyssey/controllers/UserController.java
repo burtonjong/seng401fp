@@ -7,6 +7,7 @@ import com.seng401.endless_odyssey.model.User;
 import com.seng401.endless_odyssey.repository.UserRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -22,6 +23,12 @@ public class UserController {
     @GetMapping
     public List<User> getUsers() {
         return userRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable UUID id) {
+        return userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     @PostMapping

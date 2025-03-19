@@ -5,18 +5,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Users, MessageSquare } from "lucide-react";
+import { Clock, Book } from "lucide-react";
 
-export default function Stats() {
-  // stats
-  // amount of stories created
-  // time since account creation
-
-  // optional for later
-  // amount of messages sent
+export default function Stats({
+  storiesLength,
+  createdAt,
+}: {
+  storiesLength: number;
+  createdAt: string;
+}) {
   const stats = [
-    { icon: MessageSquare, label: "Posts", value: "248" },
-    { icon: Users, label: "Followers", value: "1,024" },
+    { icon: Book, label: "Stories", value: storiesLength },
+    { icon: Clock, label: "Time", value: createdAt },
   ];
   return (
     <Card className="w-full md:col-span-2">
