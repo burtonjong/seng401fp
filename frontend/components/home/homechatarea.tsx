@@ -8,6 +8,7 @@ import { ArrowUpCircle, X, Eye, EyeClosed } from "lucide-react";
 import HomeHero from "@/components/home/homehero";
 import { gsap } from "gsap";
 import { cn } from "@/lib/utils";
+import { createMessage } from "@/api/stories/mutations";
 
 export default function HomeChatArea({ username }: { username: string }) {
   const [messages, setMessages] = useState<{ role: string; content: string }[]>(
@@ -19,6 +20,7 @@ export default function HomeChatArea({ username }: { username: string }) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const alreadyAnimated = useRef<Set<number>>(new Set()); // temporary storage to keep track of messages that were already animated
   const [showChoicesPopup, setShowChoicesPopup] = useState(false);
+  const storyID = "05bff06c-a8fd-4c48-b1cd-e4da818a7abf"; // placeholder
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -27,8 +29,6 @@ export default function HomeChatArea({ username }: { username: string }) {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
-  console.log(input);
 
   const handleSendMessage = async (inputOption?: string) => {
     const messageContent = inputOption || input;
@@ -51,6 +51,12 @@ export default function HomeChatArea({ username }: { username: string }) {
         geminiResponse.choice3,
       ];
 
+      try{
+        const newMessage = await createMessage({ storyID: storyID, role: "assistant", content: assistantMessage });
+        console.log(newMessage);
+      }catch(error){
+        console.error("Error creating message:", error);
+      }
       setMessages([
         ...newMessages,
         { role: "assistant", content: assistantMessage },

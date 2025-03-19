@@ -8,7 +8,7 @@ export const generateStoryline = async (messages: { role: string; content: strin
   try {
 
     const prompt = `
-    You are an adventure storyteller. 
+    You are an adventure storyteller. Make sure every story is unique. Use these ideas to help generate storylines Mystical Forest, Desert Wasteland, Mountain Peaks, Ancient Ruins, Space Expedition, Underwater Exploration, Haunted Mansion, Ancient Temple or Pyramid, Volcanic Island, Frozen Tundra, Lost Island, Abandoned City, Magical Library, Steampunk Airship, Futuristic Cyberpunk Metropolis, Pirate Ship on the High Seas, Hidden Underground Cavern, Post-Apocalyptic Wasteland, Parallel Universe, Timeless City of the Gods, Abandoned Amusement Park, Floating Sky Islands, Alien Planet, Forgotten Desert Oasis, Wild West Frontier, Mythical Mountain Pass, Alien Artifact Site, Underground Tunnel Network, Vampire's Castle, Cursed Tomb
     Please respond to the user's question and then give exactly 3 choices for them to continue the story.
 
     The response must be in the following JSON format:
@@ -35,6 +35,9 @@ export const generateStoryline = async (messages: { role: string; content: strin
 
     const response = await model.generateContent({
       contents: contents,
+      generationConfig: {
+        temperature: 0.9,
+      }
     });
 
     var textResponse = response.response.text();
