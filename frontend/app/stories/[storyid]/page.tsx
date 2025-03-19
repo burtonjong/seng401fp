@@ -5,11 +5,7 @@ import HomeHeader from "@/components/home/homeheader";
 import StoryChatPage from "@/components/stories/storychatarea";
 import * as React from 'react'
 
-type Props = {
-  params: { storyid: string };
-};
-
-export default async function StoryPage({ params }: Props) {
+export default async function StoryPage({params,}: {params: { storyid: string };}) {
   const supabase = createClient();
 
   const { storyid } = await params;
