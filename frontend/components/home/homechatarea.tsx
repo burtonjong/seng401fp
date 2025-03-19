@@ -38,10 +38,17 @@ export default function HomeChatArea({ username }: { username: string }) {
       ...messages,
       { role: "user", content: messageContent },
     ];
+
+    try{
+        const newMessage = await createMessage({ storyID: storyID, role: "user", content: messageContent });
+        console.log(newMessage);
+      }catch(error){
+        console.error("Error creating message:", error);
+    }
     setMessages(newMessages);
     setLoading(true);
 
-    const geminiResponse = await generateStoryline(newMessages);
+    const geminiResponse = await generateStoryline(newMessages); 
 
     if (geminiResponse) {
       const assistantMessage = geminiResponse.response;
@@ -50,22 +57,22 @@ export default function HomeChatArea({ username }: { username: string }) {
         geminiResponse.choice2,
         geminiResponse.choice3,
       ];
-
       try{
-        const newMessage = await createMessage({ storyID: storyID, role: "assistant", content: assistantMessage });
-        console.log(newMessage);
+        const geminiMessage = await createMessage({ storyID: storyID, role: "assistant", content: assistantMessage });
+        console.log(geminiMessage);
       }catch(error){
         console.error("Error creating message:", error);
-      }
-      setMessages([
-        ...newMessages,
-        { role: "assistant", content: assistantMessage },
-      ]);
-      setChoices(assistantChoices);
-    }
-    setLoading(false);
-    setInput(""); // Clear the input after sending the message
-  };
+    }   
+
+        setMessages([
+            ...newMessages,
+            { role: "assistant", content: assistantMessage },
+        ]);
+        setChoices(assistantChoices);
+        }
+        setLoading(false);
+        setInput(""); // Clear the input after sending the message
+    };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {

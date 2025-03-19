@@ -33,7 +33,7 @@ export async function createMessage(params: { storyID: string, role: string, con
         method: "POST",
         data: {
           
-            story: params.storyID,
+            story: {"id": params.storyID},
             role: params.role,
             content: params.content,
           
