@@ -5,19 +5,29 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { User } from "@/types/types";
 import { Clock, Book } from "lucide-react";
 
 export default function Stats({
-  storiesLength,
+  userData,
   createdAt,
 }: {
-  storiesLength: number;
+  userData: User;
   createdAt: string;
 }) {
+  const daysSinceJoined = Math.floor(
+    (new Date().getTime() - new Date(createdAt).getTime()) / (1000 * 3600 * 24)
+  );
+
   const stats = [
-    { icon: Book, label: "Stories", value: storiesLength },
-    { icon: Clock, label: "Time", value: createdAt },
+    { icon: Book, label: "Stories Created", value: userData?.stories?.length },
+    {
+      icon: Clock,
+      label: "Days Since You Joined",
+      value: daysSinceJoined,
+    },
   ];
+
   return (
     <Card className="w-full md:col-span-2">
       <CardHeader>

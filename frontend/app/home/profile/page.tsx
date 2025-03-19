@@ -21,9 +21,8 @@ export default async function ProfilePage() {
 
   const username = await getUsername();
 
-  const fetchedUser = (await getUser(user.id)) as User;
-
-  const storiesLength = fetchedUser?.stories?.length;
+  // scuffed but its ok
+  const userData = (await getUser(user.id)) as User;
 
   return (
     <div className="container mx-auto py-8 px-4 w-[75dvw] flex items-center flex-col">
@@ -38,7 +37,7 @@ export default async function ProfilePage() {
 
       <div className="flex flex-col items-center w-full gap-4">
         <UserDetails user={user} username={username} />
-        <Stats storiesLength={storiesLength ?? 0} createdAt={user.created_at} />
+        <Stats userData={userData} createdAt={user.created_at} />
       </div>
     </div>
   );
