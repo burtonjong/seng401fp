@@ -31,9 +31,9 @@ public class StoryController {
     public ResponseEntity<Story> getStoryById(@PathVariable UUID id) {
         Optional<Story> story = storyRepository.findById(id);
         if (story.isPresent()) {
-            return ResponseEntity.ok(story.get()); 
+            return ResponseEntity.ok(story.get());
         } else {
-            return ResponseEntity.notFound().build();  
+            return ResponseEntity.notFound().build();
         }
     } 
 
@@ -41,4 +41,15 @@ public class StoryController {
     public Story createStory(@RequestBody Story story) {
         return storyRepository.save(story);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteStory(@PathVariable UUID id) {
+        if (storyRepository.existsById(id)) {
+            storyRepository.deleteById(id);
+            return ResponseEntity.noContent().build(); // ok no content
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }
