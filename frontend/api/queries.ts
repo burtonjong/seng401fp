@@ -1,7 +1,9 @@
 import { type User, Message, Story } from "@/types/types";
 import { fetchApi } from "@/lib/axios";
 
-export async function getUser(userId: string): Promise<User | { error: { message: string }, statusCode: number }> {
+export async function getUser(
+  userId: string
+): Promise<User | { error: { message: string }; statusCode: number }> {
   try {
     const response = await fetchApi<User>(`/users/${userId}`, {
       method: "GET",
@@ -18,7 +20,9 @@ export async function getUser(userId: string): Promise<User | { error: { message
   }
 }
 
-export async function getMessage(messageId: string): Promise<Message | { error: { message: string }, statusCode: number }> {
+export async function getMessage(
+  messageId: string
+): Promise<Message | { error: { message: string }; statusCode: number }> {
   try {
     const response = await fetchApi<Message>(`/message/${messageId}`, {
       method: "GET",
@@ -35,7 +39,9 @@ export async function getMessage(messageId: string): Promise<Message | { error: 
   }
 }
 
-export async function getStory(storyId: string): Promise<Story | { error: { message: string }, statusCode: number }> {
+export async function getStory(
+  storyId: string
+): Promise<Story | { error: { message: string }; statusCode: number }> {
   try {
     const response = await fetchApi<Story>(`/story/${storyId}`, {
       method: "GET",
@@ -52,10 +58,12 @@ export async function getStory(storyId: string): Promise<Story | { error: { mess
   }
 }
 
-export async function getAllMessages(): Promise<Message[] | { error: { message: string }, statusCode: number }> {
+export async function getAllMessages(): Promise<
+  Message[] | { error: { message: string }; statusCode: number }
+> {
   try {
-    const response = await fetchApi<Message[]>('/messages', {
-      method: 'GET',
+    const response = await fetchApi<Message[]>("/messages", {
+      method: "GET",
     });
     return response;
   } catch (error) {
@@ -69,10 +77,12 @@ export async function getAllMessages(): Promise<Message[] | { error: { message: 
   }
 }
 
-export async function getAllStories(): Promise<Story[] | { error: { message: string }, statusCode: number }> {
+export async function getAllStories(): Promise<
+  Story[] | { error: { message: string }; statusCode: number }
+> {
   try {
-    const response = await fetchApi<Story[]>('/stories', {
-      method: 'GET',
+    const response = await fetchApi<Story[]>("/stories", {
+      method: "GET",
     });
     return response;
   } catch (error) {

@@ -3,15 +3,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
-import { ListFilter, Menu, Plus, LogOut } from "lucide-react";
-
-// only if we decide to have settings
-// import { Settings } from "lucide-react";
+import { ListFilter, Menu, Plus, LogOut, User } from "lucide-react";
 
 import { signOutAction } from "@/app/actions";
 import { getUserDetails } from "@/app/actions";
 import { createStory } from "@/api/stories/mutations";
-
+import { useRouter } from "next/navigation";
 
 export const createStoryForUser = async () => {
   const user = await getUserDetails();
@@ -41,7 +38,14 @@ export const createStoryForUser = async () => {
 };
 
 export default function Sidebar() {
+  const router = useRouter();
+
+  const handleProfile = () => {
+    router.push("/home/profile");
+  };
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
   return (
     <div
       className={`${sidebarOpen ? "w-[344px]" : "w-20"} flex-shrink-0 bg-[#0f0f0f] border-r border-[#2a2a2a] flex flex-col overflow-hidden transition-all duration-300`}
@@ -84,13 +88,14 @@ export default function Sidebar() {
       </div>
 
       <div className="mt-auto px-4 py-4 space-y-1">
-        {/* <Button
+        <Button
           variant="ghost"
           className={`w-full justify-start gap-3 py-2 text-[#e0e0e0] hover:bg-[#2a2a2a] relative ${!sidebarOpen && "justify-center"}`}
+          onClick={handleProfile}
         >
-          <Settings className="h-5 w-5" />
-          {sidebarOpen && <span>Settings</span>}
-        </Button> */}
+          <User className="h-5 w-5" />
+          {sidebarOpen && <span>Profile</span>}
+        </Button>
         <Button
           variant="ghost"
           className={`w-full justify-start gap-3 py-2 text-[#e0e0e0] hover:bg-[#2a2a2a] relative ${!sidebarOpen && "justify-center"}`}
