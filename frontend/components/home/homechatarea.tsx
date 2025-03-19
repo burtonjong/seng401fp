@@ -30,15 +30,6 @@ export default function HomeChatArea({ username }: { username: string }) {
     scrollToBottom();
   }, [messages]);
 
-  const shortenString = (str: string, maxLength: number) => {
-    return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
-  };
-  
-  const longString = "This is a very long string that needs to be shortened.";
-  const shortString = shortenString(longString, 20);
-  
-  console.log(shortString); // "This is a very long..."
-  
 
   const handleSendMessage = async (inputOption?: string) => {
     const messageContent = inputOption || input;
@@ -68,7 +59,7 @@ export default function HomeChatArea({ username }: { username: string }) {
         geminiResponse.choice3,
       ];
       try{
-        const geminiMessage = await createMessage({ storyID: storyID, role: "assistant", content: assistantMessage });
+        const geminiMessage = await createMessage({ storyID: storyID, role: "assistant", content: "Hello" });
         console.log(geminiMessage);
       }catch(error){
         console.error("Error creating message:", error);
