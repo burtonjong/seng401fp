@@ -1,5 +1,5 @@
 import { fetchApi } from "@/lib/axios";
-import { Story, UserDetails } from "@/types/types";
+import { Story, UserDetails, Message } from "@/types/types";
 
 export async function createStory(params: { user: UserDetails }): Promise<Story | { error: { message: string }, statusCode: number }> {
   try {
@@ -26,3 +26,32 @@ export async function createStory(params: { user: UserDetails }): Promise<Story 
     } 
   }
 }
+
+export async function createMessage(params: { storyID: string, role: string, content: string }): Promise<Message | { error: { message: string }, statusCode: number }> {
+    try {
+      const response = await fetchApi<Message>("/messages", {
+        method: "POST",
+        data: {
+          
+            story: {"id": params.storyID},
+            role: params.role,
+            content: params.content,
+          
+        },
+      });
+  
+      return response;
+    } catch (error) {
+      console.error("Error creating message:", error);
+      return{
+        error: {
+          message: `Could not fetch message: ${error}`,
+        },
+        statusCode: 500,
+    } 
+  }
+}
+  
+  
+
+
