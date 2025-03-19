@@ -1,7 +1,9 @@
 import axios, { AxiosRequestConfig } from "axios";
 
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 const api = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: apiBaseUrl,
   headers: {
     "Content-Type": "application/json",
   },
@@ -9,7 +11,7 @@ const api = axios.create({
 
 export async function fetchApi<T>(
   endpoint: string,
-  options?: Omit<AxiosRequestConfig, "url">,
+  options?: Omit<AxiosRequestConfig, "url">
 ): Promise<T> {
   try {
     const response = await api({
@@ -25,6 +27,3 @@ export async function fetchApi<T>(
     throw error;
   }
 }
-
-
-
