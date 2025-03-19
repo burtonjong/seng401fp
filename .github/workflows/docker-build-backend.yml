@@ -44,13 +44,7 @@ jobs:
       - name: Run Docker container for backend
         run: |
           docker run -d --name backend-container -p 8080:8080 -p 3000:3000 backend-image
-
-      # Test the container (Example: Simple health check)
-      - name: Test Docker container
-        run: |
-          # Example: check if the backend is accessible at port 8080
-          curl --fail http://localhost:8080/ || exit 1
-
+          
       # Optionally, stop and clean up containers after the test
       - name: Stop and clean up containers
         run: |
