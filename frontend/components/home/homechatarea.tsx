@@ -291,19 +291,6 @@ export default function HomeChatArea({ username }: { username: string }) {
       </div>
       {messages.length === 0 ? (
         <div className="flex items-center rounded-full border border-[#444] bg-[#1e1e1e] px-4 py-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-full"
-            onClick={() => setShowChoicesPopup(!showChoicesPopup)}
-          >
-            {showChoicesPopup ? (
-              <EyeClosed className="h-5 w-5" />
-            ) : (
-              <Eye className="h-5 w-5" />
-            )}
-          </Button>
-
           <input
             type="text"
             value={input}

@@ -3,20 +3,22 @@ import { createClient } from "@/utils/supabase/server";
 import Sidebar from "@/components/home/sidebar";
 import HomeHeader from "@/components/home/homeheader";
 import StoryChatPage from "@/components/stories/storychatarea";
+import * as React from 'react'
 
 type Props = {
   params: { storyid: string };
 };
 
 export default async function StoryPage({ params }: Props) {
-  const supabase = await createClient();
+  const supabase = createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { storyid } = await params;
+
+  const { data: { user } } = await (await supabase).auth.getUser();
 
   if (!user) {
-    return redirect("/sign-in");
+    redirect("/sign-in");
+    return null;
   }
 
   return (
@@ -24,7 +26,7 @@ export default async function StoryPage({ params }: Props) {
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden h-full">
         <HomeHeader />
-        <StoryChatPage storyID={params.storyid} />
+        <StoryChatPage storyID={storyid} />
       </div>
     </div>
   );
