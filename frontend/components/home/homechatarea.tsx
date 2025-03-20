@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import { User } from "@/types/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Loader2 } from "lucide-react"
 
 export default function HomeChatArea({
   username,
@@ -39,11 +40,26 @@ export default function HomeChatArea({
   };
 
   return (
-    <div className="h-screen flex flex-col p-4 overflow-hidden max-h-screen">
-      <HomeHero username={username} />
-      <Button onClick={() => onCreateStory()}>
-        {loading ? "Loading..." : "Create a Story"}
-      </Button>
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 md:p-8 lg:p-12 overflow-hidden">
+      <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center">
+        <HomeHero username={username} />
+
+        <Button
+          onClick={onCreateStory}
+          disabled={loading}
+          size="lg"
+          className="w-full md:w-auto  px-8 py-6 text-lg font-medium rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+        >
+          {loading ? (
+            <span className="flex items-center gap-2">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              Creating your story...
+            </span>
+          ) : (
+            <span className="flex items-center gap-2">Create a Story</span>
+          )}
+        </Button>
+      </div>
     </div>
   );
 }
