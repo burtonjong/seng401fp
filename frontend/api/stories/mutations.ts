@@ -1,5 +1,5 @@
 import { fetchApi } from "@/lib/axios";
-import { Story, UserDetails, Message } from "@/types/types";
+import { Story, UserDetails, Message, User } from "@/types/types";
 
 type CreateStorySuccess = { success: true; story: Story };
 type CreateStoryError = {
@@ -10,18 +10,13 @@ type CreateStoryError = {
 
 export type CreateStoryResponse = CreateStorySuccess | CreateStoryError;
 
-export async function createStory(params: {
-  user: UserDetails;
-}): Promise<CreateStoryResponse> {
+export async function createStory(user: User): Promise<CreateStoryResponse> {
   try {
     const response = await fetchApi<Story>("/stories", {
       method: "POST",
       data: {
-        user: {
-          id: params.user.id,
-          username: params.user.username,
-          email: params.user.email,
-        },
+        user: user,
+        name: "New Story",
         messages: [],
       },
     });
@@ -63,27 +58,26 @@ export async function createMessage(params: {
     };
   }
 }
-  
-export async function updateName(params: { storyID: Story["id"], name: Story["name"] }): Promise<Story | { error: { message: string }, statusCode: number }> {
-    try{
-        const response = await fetchApi<Story>(`/stories/${params.storyID}`, {
-            method: "PUT",
-            
-            data: {
-                name: params.name,
-            },
-        });
-        return response;
-    } catch (error) {
-        console.error("Error updating story name:", error);
-        return{
-          error: {
-            message: `Could not update story name: ${error}`,
-          },
-          statusCode: 500,
-        } 
-    }
 
+export async function updateName(params: {
+  storyID: string;
+  name: string;
+}): Promise<Story | { error: { message: string }; statusCode: number }> {
+  try {
+    const response = await fetchApi<Story>(`/stories/${params.storyID}`, {
+      method: "PUT",
+      data: {
+        name: params.name,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error updating story name:", error);
+    return {
+      error: {
+        message: `Could not update story name: ${error}`,
+      },
+      statusCode: 500,
+    };
+  }
 }
-
-

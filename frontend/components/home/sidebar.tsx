@@ -3,58 +3,25 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
-import { ListFilter, Menu, Plus, LogOut, User } from "lucide-react";
+import { ListFilter, Menu, Plus, LogOut, User2 } from "lucide-react";
 
 import { signOutAction } from "@/app/actions";
-import { getUserDetails, getUserStories, deleteStory } from "@/app/actions";
+import { getUserStories, deleteStory } from "@/app/actions";
 import { createStory } from "@/api/stories/mutations";
 import { useRouter } from "next/navigation";
-import { Story } from "@/types/types";
+import { Story, User } from "@/types/types";
 
-export const createStoryForUser = async (
-  setStories: React.Dispatch<React.SetStateAction<Story[]>>
-) => {
-  const user = await getUserDetails();
-  if (user) {
-    try {
-      const newStory = await createStory({ user });
-      console.log("Story created successfully");
-
-      if (newStory.success && newStory.story) {
-        setStories((prevStories: Story[]) => [
-          ...prevStories,
-          {
-            id: newStory.story.id,
-            user: newStory.story.user,
-            created_at: newStory.story.created_at,
-            name: "Story",
-          }, // title is just story for now, we can maybe add a name for the story in the database later
-        ]);
-      }
-
-      return newStory;
-    } catch (error) {
-      console.error("Error creating story:", error);
-      return {
-        error: {
-          message: `Error creating story: ${error}`,
-        },
-        statusCode: 500,
-      };
-    }
-  } else {
-    console.error("No user is logged in");
-    return {
-      error: {
-        message: "No user is logged in",
-      },
-      statusCode: 400,
-    };
-  }
-};
-
-export default function Sidebar() {
+export default function Sidebar({
+  userObject,
+  storyId,
+}: {
+  userObject: User;
+  storyId: string;
+}) {
   const router = useRouter();
+
+  const [loading, setLoading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const handleProfile = () => {
     router.push("/home/profile");
@@ -62,10 +29,6 @@ export default function Sidebar() {
 
   const handleSwitchStory = (params: { storyID: string }) => {
     router.push(`/stories/${params.storyID}`);
-  };
-
-  const handleNewChat = () => {
-    router.push("/home");
   };
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -83,11 +46,33 @@ export default function Sidebar() {
   }, []);
 
   const handleDeleteStory = async (storyId: string) => {
+    setDeleting(true);
     const success = await deleteStory(storyId);
     if (success) {
       setStories((prevStories) =>
         prevStories.filter((story) => story.id !== storyId)
       );
+      setDeleting(false);
+      router.push(`/home`);
+    }
+  };
+
+  const createStoryForUser = async (user: User) => {
+    try {
+      setLoading(true);
+      const newStory = await createStory(user);
+      console.log("Story created successfully");
+      if (newStory.success && newStory.story) {
+        router.push(`/stories/${newStory.story.id}`);
+      }
+    } catch (error) {
+      console.error("Error creating story:", error);
+      return {
+        error: {
+          message: `Error creating story: ${error}`,
+        },
+        statusCode: 500,
+      };
     }
   };
 
@@ -110,10 +95,12 @@ export default function Sidebar() {
         <Button
           variant="ghost"
           className={`w-full justify-start gap-3 rounded-full bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white ${!sidebarOpen && "justify-center"}`}
-          onClick={() => createStoryForUser(setStories)}
+          onClick={() => createStoryForUser(userObject)}
         >
           <Plus className="h-5 w-5" />
-          {sidebarOpen && <span>New chat</span>}
+          {sidebarOpen && (
+            <span>{loading ? "Creating story..." : "New chat"}</span>
+          )}
         </Button>
       </div>
 
@@ -123,19 +110,21 @@ export default function Sidebar() {
         </h3>
         {stories.length > 0 ? (
           stories.map((story) => (
-            <div key={story.id} className="flex items-center justify-between">
+            <div key={story.id} className={`flex items-center justify-between`}>
               <Button
                 variant="ghost"
-                className={`w-full justify-start gap-3 py-2 text-[#e0e0e0] hover:bg-[#2a2a2a] ${!sidebarOpen && "justify-center"}`}
+                className={`w-full justify-start gap-3 py-2 text-[#e0e0e0] hover:bg-[#2a2a2a] ${!sidebarOpen && "justify-center"} ${story.id === storyId && "bg-[#2a2a2a] text-white"}`}
                 onClick={() => handleSwitchStory({ storyID: story.id })}
               >
                 <ListFilter className="h-5 w-5 flex-shrink-0" />
                 {sidebarOpen && (
-                  <span className="truncate text-left">{story.name}</span>
+                  <span className="truncate text-left">
+                    {deleting ? "Deleting... " : story.name}
+                  </span>
                 )}
               </Button>
               <button
-                className="ml-2 text-white hover:text-white"
+                className="ml-4 text-white hover:text-white"
                 onClick={() => handleDeleteStory(story.id)}
               >
                 <span className="text-xl">&times;</span>
@@ -155,7 +144,7 @@ export default function Sidebar() {
           className={`w-full justify-start gap-3 py-2 text-[#e0e0e0] hover:bg-[#2a2a2a] relative ${!sidebarOpen && "justify-center"}`}
           onClick={handleProfile}
         >
-          <User className="h-5 w-5" />
+          <User2 className="h-5 w-5" />
           {sidebarOpen && <span>Profile</span>}
         </Button>
         <Button
