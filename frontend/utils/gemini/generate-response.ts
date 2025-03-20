@@ -49,6 +49,6 @@ export const generateStoryline = async (messages: { role: string; content: strin
     return parsedResponse;
   } catch (error) {
     console.error("Gemini API Error:", error);
-    return { response: "An error occurred.", choices: [] };
+    return { response: null, choices: [] };
   }
 };

@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { UserDetails } from "@/types/types";
-import { Story } from "@/types/types";
+import { Story, Message } from "@/types/types";
 
 export const signUpAction = async (formData: FormData) => {
   const username = formData.get("username")?.toString();
@@ -190,4 +190,16 @@ export const deleteStory = async (storyId: string): Promise<boolean> => {
   const {data} = await supabase.from("stories").delete().eq("id", storyId) as { data: { id: string }[] | null;};
 
   return true;
+};
+
+export const getStoryMessages = async (story_id: string): Promise<Message[] | null> => {
+  const supabase = await createClient();
+
+  const { data: messages, error } = await supabase.from("messages").select("*").eq("story_id", story_id);
+
+  if (error) {
+    console.error("Error fetching messages:", error);
+    return null;
+  }
+  return messages as Message[] | null;
 };
