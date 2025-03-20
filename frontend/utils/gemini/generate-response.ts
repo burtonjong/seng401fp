@@ -59,11 +59,14 @@ export const generateStoryName = async (message: string) => {
     try {
         const prompt = `Using the following start of a story, generate a single, short, and simple name for the story. The start of the story is: ${message}. Please give only one name as a string as a response.`;
         const response = await model.generateContent({
-            contents: [{role: "assistant", parts: [{text: prompt}]}],
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
         });
+
         return response.response.text();
+        
     } catch (error) {
         console.error("Gemini API Error:", error);
-        return { response: "An error occurred." };
+        return "An error occurred."; 
     }
 };
+
