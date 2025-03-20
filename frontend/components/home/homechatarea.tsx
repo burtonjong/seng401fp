@@ -2,14 +2,14 @@
 
 import type React from "react";
 import { useState, useRef, useEffect } from "react";
-import { generateStoryline } from "@/utils/gemini/generate-response";
+import { generateStoryline, generateStoryName } from "@/utils/gemini/generate-response";
 import { Button } from "@/components/ui/button";
 import { ArrowUpCircle, X } from "lucide-react";
 import HomeHero from "@/components/home/homehero";
 import { gsap } from "gsap";
 import { cn } from "@/lib/utils";
 import { getUserDetails } from "@/app/actions";
-import { createStory } from "@/api/stories/mutations";
+import { createStory, updateName } from "@/api/stories/mutations";
 import { createMessage } from "@/api/stories/mutations";
 import { redirect } from "next/navigation";
 
@@ -21,7 +21,7 @@ export default function HomeChatArea({ username }: { username: string }) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const alreadyAnimated = useRef<Set<number>>(new Set()); // temporary storage to keep track of messages that were already animated
   const [showChoicesPopup, setShowChoicesPopup] = useState(false);
-  const [storyID, setStoryID] = useState<string | null>(null); // To track the current story ID
+  const [storyID, setStoryID] = useState<string>(""); // To track the current story ID
   
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -30,6 +30,15 @@ export default function HomeChatArea({ username }: { username: string }) {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const createStoryName = async (storyID: string, newName: string) => {
+    try {
+        const response = await updateName({storyID: storyID, name: newName });
+        console.log(response);
+    } catch (error) {
+        console.error("Error updating story name:", error);
+    }
+  };
 
   const handleSendMessage = async (inputOption?: string) => {
     const messageContent = inputOption || input;
@@ -82,6 +91,15 @@ export default function HomeChatArea({ username }: { username: string }) {
                   content: assistantMessage,
                 });
                 console.log("Assistant message created");
+
+                const storyName = await generateStoryName(assistantMessage);
+                console.log(storyName);
+                try {
+                    const response = await createStoryName(newStory.story.id, storyName);
+                    console.log(response);
+                } catch (error) {
+                    console.error("Error updating story name:", error);
+                }
               } catch (error) {
                 console.error("Error creating assistant message:", error);
               }

@@ -1,12 +1,16 @@
 package com.seng401.endless_odyssey.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.seng401.endless_odyssey.model.Message;
 import com.seng401.endless_odyssey.repository.MessageRepository;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/messages")

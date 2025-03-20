@@ -63,3 +63,27 @@ export async function createMessage(params: {
     };
   }
 }
+  
+export async function updateName(params: { storyID: Story["id"], name: Story["name"] }): Promise<Story | { error: { message: string }, statusCode: number }> {
+    try{
+        const response = await fetchApi<Story>(`/stories/${params.storyID}`, {
+            method: "PUT",
+            
+            data: {
+                name: params.name,
+            },
+        });
+        return response;
+    } catch (error) {
+        console.error("Error updating story name:", error);
+        return{
+          error: {
+            message: `Could not update story name: ${error}`,
+          },
+          statusCode: 500,
+        } 
+    }
+
+}
+
+

@@ -25,9 +25,9 @@ export const createStoryForUser = async (
           ...prevStories,
           {
             id: newStory.story.id,
-            title: "Story",
             user: newStory.story.user,
             created_at: newStory.story.created_at,
+            name: "Story",
           }, // title is just story for now, we can maybe add a name for the story in the database later
         ]);
       }
@@ -131,7 +131,7 @@ export default function Sidebar() {
               >
                 <ListFilter className="h-5 w-5 flex-shrink-0" />
                 {sidebarOpen && (
-                  <span className="truncate text-left">{story.title}</span>
+                  <span className="truncate text-left">{story.name}</span>
                 )}
               </Button>
               <button
