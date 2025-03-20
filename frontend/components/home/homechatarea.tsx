@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import { User } from "@/types/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Particles from "../ui/particles";
 
 export default function HomeChatArea({
   username,
@@ -39,11 +40,17 @@ export default function HomeChatArea({
   };
 
   return (
-    <div className="h-screen flex flex-col p-4 overflow-hidden max-h-screen">
-      <HomeHero username={username} />
-      <Button onClick={() => onCreateStory()}>
-        {loading ? "Loading..." : "Create a Story"}
-      </Button>
-    </div>
+    <>
+      <div className="h-screen flex flex-col p-4 overflow-hidden max-h-screen">
+        <Particles
+          className="absolute inset-0 -z-10 animate-fade-in"
+          quantity={300}
+        />
+        <HomeHero username={username} />
+        <Button onClick={() => onCreateStory()}>
+          {loading ? "Loading..." : "Create a Story"}
+        </Button>
+      </div>
+    </>
   );
 }

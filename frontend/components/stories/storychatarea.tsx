@@ -16,6 +16,7 @@ import {
 } from "@/api/stories/mutations";
 import { getStoryMessages } from "@/app/actions";
 import { Story, User } from "@/types/types";
+import Particles from "../ui/particles";
 
 export default function StoryChatPage({
   storyID,
@@ -312,6 +313,10 @@ export default function StoryChatPage({
 
   return (
     <div className="h-screen flex flex-col p-4 overflow-hidden max-h-screen">
+      <Particles
+        className="absolute inset-0 -z-10 animate-fade-in"
+        quantity={300}
+      />
       <div className="flex-1 overflow-y-auto mb-4 pr-4">
         <div className="flex flex-col space-y-4 w-full pr-4">
           {messages.map((message, index) => (
