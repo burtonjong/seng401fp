@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
 
 import { ListFilter, Menu, Plus, LogOut, User2 } from "lucide-react";
@@ -14,9 +14,13 @@ import { Story, User } from "@/types/types";
 export default function Sidebar({
   userObject,
   storyId,
+  stories,
+  setStories,
 }: {
   userObject: User;
   storyId?: string;
+  stories?: Story[];
+  setStories?: Dispatch<SetStateAction<Story[]>>;
 }) {
   const router = useRouter();
 
@@ -32,24 +36,12 @@ export default function Sidebar({
   };
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [stories, setStories] = useState<Story[]>([]);
-
-  useEffect(() => {
-    const fetchStories = async () => {
-      const fetchedStories = await getUserStories();
-      if (fetchedStories) {
-        setStories(fetchedStories); // title is just story for now, we can maybe add a name for the story in the database later
-      }
-    };
-
-    fetchStories();
-  }, []);
 
   const handleDeleteStory = async (storyId: string) => {
     setDeleting(true);
     const success = await deleteStory(storyId);
     if (success) {
-      setStories((prevStories) =>
+      setStories?.((prevStories) =>
         prevStories.filter((story) => story.id !== storyId)
       );
       setDeleting(false);
@@ -108,7 +100,7 @@ export default function Sidebar({
         <h3 className={`text-sm font-medium mb-2 ${!sidebarOpen && "hidden"}`}>
           Recent
         </h3>
-        {stories.length > 0 ? (
+        {stories && stories.length > 1 ? (
           stories.map((story) => (
             <div key={story.id} className={`flex items-center justify-between`}>
               <Button

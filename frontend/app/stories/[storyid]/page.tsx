@@ -1,11 +1,9 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import Sidebar from "@/components/home/sidebar";
-import HomeHeader from "@/components/home/homeheader";
-import StoryChatPage from "@/components/stories/storychatarea";
 import * as React from "react";
 import { getUser } from "@/api/queries";
 import { User } from "@/types/types";
+import StoryContainer from "@/components/stories/storycontainer";
 
 export default async function StoryPage({
   params,
@@ -30,11 +28,7 @@ export default async function StoryPage({
 
   return (
     <div className="fixed inset-0 flex bg-black text-white">
-      <Sidebar userObject={userObject} storyId={storyid} />
-      <div className="flex-1 flex flex-col overflow-hidden h-full">
-        <HomeHeader />
-        <StoryChatPage storyID={storyid} userObject={userObject} />
-      </div>
+      <StoryContainer userObject={userObject} storyid={storyid} />
     </div>
   );
 }
