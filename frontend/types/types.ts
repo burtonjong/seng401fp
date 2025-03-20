@@ -12,6 +12,7 @@ export interface Story {
   title: string;
   created_at: string;
   user: string;
+  name: string;
 }
 
 export interface Message {
