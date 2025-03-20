@@ -70,3 +70,17 @@ export const generateStoryName = async (message: string) => {
     }
 };
 
+export const generateStoryIdea = async () => {
+  try {
+      const prompt = `Give me a single idea in one sentence for a cool short story`;
+      const response = await model.generateContent({
+          contents: [{ role: "user", parts: [{ text: prompt }] }],
+      });
+
+      return response.response.text();
+     
+  } catch (error) {
+      console.error("Gemini API Error:", error);
+      return "An error occurred.";
+  }
+};
