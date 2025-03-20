@@ -7,7 +7,7 @@ import {
 } from "@/utils/gemini/generate-response";
 import { Button } from "@/components/ui/button";
 import { ArrowUpCircle, Eye, X } from "lucide-react";
-import { gsap } from "gsap";
+import { gsap, random } from "gsap";
 import { cn } from "@/lib/utils";
 import {
   createMessage,
@@ -17,6 +17,7 @@ import {
 import { getStoryMessages } from "@/app/actions";
 import { Story, User } from "@/types/types";
 import Particles from "../ui/particles";
+import { get } from "http";
 
 export default function StoryChatPage({
   storyID,
@@ -36,6 +37,25 @@ export default function StoryChatPage({
   const [showChoicesPopup, setShowChoicesPopup] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const alreadyAnimated = useRef<Set<number>>(new Set());
+  const [buttonsVisible, setButtonsVisible] = useState(true);
+  const exampleChoices = [
+    "A detective discovers a hidden room in an old mansion, where time seems to stand still.",
+    "A group of astronauts stranded on a distant planet uncover a long-lost alien civilization.",
+    "A young artist’s paintings begin to come to life, changing the course of history.",
+    "A man wakes up with the ability to hear others' thoughts but can’t turn it off.",
+    "In a world where dreams are traded as currency, a young dreamer finds themselves caught in a dangerous scheme.",
+    "A forgotten toy soldier comes to life to protect a family from an impending threat.",
+    "An ordinary librarian discovers that their books are portals to alternate realities.",
+    "A famous illusionist discovers that their tricks are no longer under their control.",
+    "A time traveler accidentally changes a small detail in history, causing an alternate future to unfold.",
+    "A scientist accidentally creates a machine that lets people swap bodies for a day, leading to unintended chaos."
+  ];
+  const [randomSubArray, setRandomSubArray] = useState<string[]>([]);
+
+  useEffect(() => {
+    const storedState = localStorage.getItem(`buttonsHidden-${storyID}`);
+    setButtonsVisible(storedState !== "true");
+  }, [storyID]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -185,6 +205,8 @@ export default function StoryChatPage({
   }, [messages]);
 
   const handleSendMessage = async (user: User, inputOption?: string) => {
+    setButtonsVisible(false);
+    localStorage.setItem(`buttonsHidden-${storyID}`, "true");
     const messageContent = inputOption || input;
     if (!messageContent.trim()) return;
 
@@ -311,8 +333,58 @@ export default function StoryChatPage({
     }
   };
 
+  const getRandomInt = (min: number, max: number): number => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
+
+  useEffect(() => {
+    const randomSubArray = [
+      exampleChoices[getRandomInt(0, exampleChoices.length - 1)],
+      exampleChoices[getRandomInt(0, exampleChoices.length - 1)],
+      exampleChoices[getRandomInt(0, exampleChoices.length - 1)],
+    ];
+    
+    // Update the state
+    setRandomSubArray(randomSubArray);
+  }, []);
+
   return (
     <div className="h-screen flex flex-col p-4 overflow-hidden max-h-screen">
+
+{buttonsVisible && (
+        <>
+          <div className="text-center mt-12 mb-32">
+            <h1 className="text-7xl font-bold text-white">
+              Some options to help get you started!
+            </h1>
+          </div>
+
+
+          <div className="w-screen px-2">
+  <div className="flex flex-col items-center justify-end flex-1 space-y-20 mb-12 w-5/6">
+    <button
+      className="bg-gray-500 text-white py-16 rounded-lg text-3xl w-full"
+      onClick={() => handleSendMessage(userObject, randomSubArray[0])}
+    >
+      {randomSubArray[0]}
+    </button>
+    <button
+      className="bg-gray-500 text-white py-16 rounded-lg text-3xl w-full"
+      onClick={() => handleSendMessage(userObject, randomSubArray[1])}
+    >
+      {randomSubArray[1]}
+    </button>
+    <button
+      className="bg-gray-500 text-white py-16 rounded-lg text-3xl w-full"
+      onClick={() => handleSendMessage(userObject, randomSubArray[2])}
+    >
+      {randomSubArray[2]}
+    </button>
+  </div>
+</div>
+        </>
+      )}
+
       <Particles
         className="absolute inset-0 -z-10 animate-fade-in"
         quantity={300}
