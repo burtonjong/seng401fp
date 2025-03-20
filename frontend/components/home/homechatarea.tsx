@@ -4,7 +4,7 @@ import type React from "react";
 import { useState, useRef, useEffect } from "react";
 import { generateStoryline } from "@/utils/gemini/generate-response";
 import { Button } from "@/components/ui/button";
-import { ArrowUpCircle, X, Eye, EyeClosed } from "lucide-react";
+import { ArrowUpCircle, X } from "lucide-react";
 import HomeHero from "@/components/home/homehero";
 import { gsap } from "gsap";
 import { cn } from "@/lib/utils";
@@ -317,7 +317,7 @@ export default function HomeChatArea({ username }: { username: string }) {
             className="h-8 w-8 rounded-full bg-white text-black"
             onClick={() => setShowChoicesPopup(true)}
           >
-            <Eye className="h-5 w-5" />
+            <ArrowUpCircle className="h-5 w-5" />
           </Button>
         </div>
       )}
