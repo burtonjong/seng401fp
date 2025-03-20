@@ -48,7 +48,7 @@ export default function StoryChatPage({
     "An ordinary librarian discovers that their books are portals to alternate realities.",
     "A famous illusionist discovers that their tricks are no longer under their control.",
     "A time traveler accidentally changes a small detail in history, causing an alternate future to unfold.",
-    "A scientist accidentally creates a machine that lets people swap bodies for a day, leading to unintended chaos."
+    "A scientist accidentally creates a machine that lets people swap bodies for a day, leading to unintended chaos.",
   ];
   const [randomSubArray, setRandomSubArray] = useState<string[]>([]);
 
@@ -343,15 +343,12 @@ export default function StoryChatPage({
       exampleChoices[getRandomInt(0, exampleChoices.length - 1)],
       exampleChoices[getRandomInt(0, exampleChoices.length - 1)],
     ];
-    
-    // Update the state
     setRandomSubArray(randomSubArray);
   }, []);
 
   return (
     <div className="h-screen flex flex-col p-4 overflow-hidden max-h-screen">
-
-{buttonsVisible && (
+      {buttonsVisible && (
         <>
           <div className="text-center mt-12 mb-32">
             <h1 className="text-7xl font-bold text-white">
@@ -359,29 +356,28 @@ export default function StoryChatPage({
             </h1>
           </div>
 
-
           <div className="w-screen px-2">
-  <div className="flex flex-col items-center justify-end flex-1 space-y-20 mb-12 w-5/6">
-    <button
-      className="bg-gray-500 text-white py-16 rounded-lg text-3xl w-full"
-      onClick={() => handleSendMessage(userObject, randomSubArray[0])}
-    >
-      {randomSubArray[0]}
-    </button>
-    <button
-      className="bg-gray-500 text-white py-16 rounded-lg text-3xl w-full"
-      onClick={() => handleSendMessage(userObject, randomSubArray[1])}
-    >
-      {randomSubArray[1]}
-    </button>
-    <button
-      className="bg-gray-500 text-white py-16 rounded-lg text-3xl w-full"
-      onClick={() => handleSendMessage(userObject, randomSubArray[2])}
-    >
-      {randomSubArray[2]}
-    </button>
-  </div>
-</div>
+            <div className="flex flex-col items-center justify-end flex-1 space-y-20 mb-12 w-5/6">
+              <button
+                className="bg-gray-500 text-white py-16 rounded-lg text-3xl w-full"
+                onClick={() => handleSendMessage(userObject, randomSubArray[0])}
+              >
+                {randomSubArray[0]}
+              </button>
+              <button
+                className="bg-gray-500 text-white py-16 rounded-lg text-3xl w-full"
+                onClick={() => handleSendMessage(userObject, randomSubArray[1])}
+              >
+                {randomSubArray[1]}
+              </button>
+              <button
+                className="bg-gray-500 text-white py-16 rounded-lg text-3xl w-full"
+                onClick={() => handleSendMessage(userObject, randomSubArray[2])}
+              >
+                {randomSubArray[2]}
+              </button>
+            </div>
+          </div>
         </>
       )}
 
