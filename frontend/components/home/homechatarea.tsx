@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import { User } from "@/types/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Particles from "../ui/particles";
 import { Loader2 } from "lucide-react"
 
 export default function HomeChatArea({
@@ -41,6 +42,10 @@ export default function HomeChatArea({
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 md:p-8 lg:p-12 overflow-hidden">
+      <Particles
+          className="absolute inset-0 -z-10 animate-fade-in"
+          quantity={300}
+        />
       <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center">
         <HomeHero username={username} />
 

@@ -6,7 +6,7 @@ import {
   generateStoryName,
 } from "@/utils/gemini/generate-response";
 import { Button } from "@/components/ui/button";
-import { ArrowUpCircle, X } from "lucide-react";
+import { ArrowUpCircle, Eye, X } from "lucide-react";
 import { gsap } from "gsap";
 import { cn } from "@/lib/utils";
 import {
@@ -16,6 +16,7 @@ import {
 } from "@/api/stories/mutations";
 import { getStoryMessages } from "@/app/actions";
 import { Story, User } from "@/types/types";
+import Particles from "../ui/particles";
 
 export default function StoryChatPage({
   storyID,
@@ -312,6 +313,10 @@ export default function StoryChatPage({
 
   return (
     <div className="h-screen flex flex-col p-4 overflow-hidden max-h-screen">
+      <Particles
+        className="absolute inset-0 -z-10 animate-fade-in"
+        quantity={300}
+      />
       <div className="flex-1 overflow-y-auto mb-4 pr-4">
         <div className="flex flex-col space-y-4 w-full pr-4">
           {messages.map((message, index) => (
@@ -422,7 +427,7 @@ export default function StoryChatPage({
             className="h-8 w-8 rounded-full bg-white text-black"
             onClick={() => setShowChoicesPopup(true)}
           >
-            <ArrowUpCircle className="h-5 w-5" />
+            <Eye className="h-5 w-5" />
           </Button>
         </div>
       )}

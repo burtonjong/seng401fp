@@ -134,7 +134,7 @@ export const resetPasswordAction = async (formData: FormData) => {
 export const signOutAction = async () => {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  return redirect("/sign-in");
+  return redirect("/");
 };
 
 export const getUsername = async () => {
@@ -175,27 +175,40 @@ export const getUserDetails = async (): Promise<UserDetails | null> => {
 
 export const getUserStories = async (): Promise<Story[] | null> => {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) return null;
 
-  const { data: stories} = await supabase.from("stories").select("*").eq("user_id", user.id); 
-  
+  const { data: stories } = await supabase
+    .from("stories")
+    .select("*")
+    .eq("user_id", user.id);
+
   return stories;
 };
 
 export const deleteStory = async (storyId: string): Promise<boolean> => {
   const supabase = await createClient();
 
-  const {data} = await supabase.from("stories").delete().eq("id", storyId) as { data: { id: string }[] | null;};
+  const { data } = (await supabase
+    .from("stories")
+    .delete()
+    .eq("id", storyId)) as { data: { id: string }[] | null };
 
   return true;
 };
 
-export const getStoryMessages = async (story_id: string): Promise<Message[] | null> => {
+export const getStoryMessages = async (
+  story_id: string
+): Promise<Message[] | null> => {
   const supabase = await createClient();
 
-  const { data: messages, error } = await supabase.from("messages").select("*").eq("story_id", story_id);
+  const { data: messages, error } = await supabase
+    .from("messages")
+    .select("*")
+    .eq("story_id", story_id);
 
   if (error) {
     console.error("Error fetching messages:", error);
