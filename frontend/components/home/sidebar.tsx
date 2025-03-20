@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, Dispatch, SetStateAction } from "react";
+import { useState, Dispatch, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
 
 import { ListFilter, Menu, Plus, LogOut, User2 } from "lucide-react";
 
 import { signOutAction } from "@/app/actions";
-import { getUserStories, deleteStory } from "@/app/actions";
+import { deleteStory } from "@/app/actions";
 import { createStory } from "@/api/stories/mutations";
 import { useRouter } from "next/navigation";
 import { Story, User } from "@/types/types";
@@ -26,6 +26,7 @@ export default function Sidebar({
 
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [storyDeleting, setStoryDeleting] = useState<string | null>(null);
 
   const handleProfile = () => {
     router.push("/home/profile");
@@ -38,6 +39,7 @@ export default function Sidebar({
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleDeleteStory = async (storyId: string) => {
+    setStoryDeleting(storyId);
     setDeleting(true);
     const success = await deleteStory(storyId);
     if (success) {
@@ -45,7 +47,9 @@ export default function Sidebar({
         prevStories.filter((story) => story.id !== storyId)
       );
       setDeleting(false);
-      router.push(`/home`);
+      if (storyId === storyDeleting) {
+        router.push(`/home`);
+      }
     }
   };
 
@@ -111,7 +115,9 @@ export default function Sidebar({
                 <ListFilter className="h-5 w-5 flex-shrink-0" />
                 {sidebarOpen && (
                   <span className="truncate text-left">
-                    {deleting ? "Deleting... " : story.name}
+                    {deleting && story.id === storyDeleting
+                      ? "Deleting... "
+                      : story.name}
                   </span>
                 )}
               </Button>

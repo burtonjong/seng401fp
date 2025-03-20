@@ -6,7 +6,7 @@ import {
   generateStoryName,
 } from "@/utils/gemini/generate-response";
 import { Button } from "@/components/ui/button";
-import { ArrowUpCircle, X } from "lucide-react";
+import { ArrowUpCircle, Eye, X } from "lucide-react";
 import { gsap } from "gsap";
 import { cn } from "@/lib/utils";
 import {
@@ -427,7 +427,7 @@ export default function StoryChatPage({
             className="h-8 w-8 rounded-full bg-white text-black"
             onClick={() => setShowChoicesPopup(true)}
           >
-            <ArrowUpCircle className="h-5 w-5" />
+            <Eye className="h-5 w-5" />
           </Button>
         </div>
       )}
