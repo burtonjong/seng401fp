@@ -30,7 +30,7 @@ export default function Achievements({ userId }: AchievementsProps) {
 	}, [userId]);
 
 	return (
-		<div className="w-full">
+		<div className="flex flex-col items-center p-4 border rounded-lg">
 			<h2 className="text-2xl font-bold mb-4">Achievements</h2>
 			<ul className="list-disc list-inside">
 				{achievements.map((achievement, index) => (

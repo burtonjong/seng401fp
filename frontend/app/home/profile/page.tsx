@@ -7,7 +7,6 @@ import { User } from "@/types/types";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import Achievements from "@/components/home/profile/achievements";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -38,8 +37,7 @@ export default async function ProfilePage() {
 
       <div className="flex flex-col items-center w-full gap-4">
         <UserDetails user={user} username={username} />
-        <Stats userData={userData} createdAt={user.created_at} />
-        <Achievements userId={user.id} />
+        <Stats userData={userData} createdAt={user.created_at} userId={user.id} />
       </div>
     </div>
   );
