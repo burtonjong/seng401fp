@@ -10,6 +10,7 @@ import { getUserDetails, getUserStories, deleteStory } from "@/app/actions";
 import { createStory } from "@/api/stories/mutations";
 import { useRouter } from "next/navigation";
 import { Story } from "@/types/types";
+import { createClient } from "@/utils/supabase/client";
 
 export const createStoryForUser = async (
   setStories: React.Dispatch<React.SetStateAction<Story[]>>
@@ -30,6 +31,31 @@ export const createStoryForUser = async (
             name: "Story",
           }, // title is just story for now, we can maybe add a name for the story in the database later
         ]);
+      }
+
+      // Check if user has created 5 stories for an achievement
+      const supabase = await createClient();
+      const { data: stories, error } = await supabase
+        .from("stories")
+        .select("*")
+        .eq("user_id", user.id);
+
+      if (error) {
+        console.error("Error fetching stories:", error);
+        return;
+      }
+
+      console.log("length of stories is", stories.length);
+      if (stories.length >= 5) {
+        const { error: achievementError } = await supabase
+          .from("achievements")
+          .insert([{ user_id: user.id, achievement: "Created 5 Stories" }]);
+
+        if (achievementError) {
+          console.error("Error adding achievement:", achievementError);
+        } else {
+          console.log("Achievement added: Created 5 Stories");
+        }
       }
 
       return newStory;
