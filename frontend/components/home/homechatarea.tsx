@@ -8,6 +8,7 @@ import { User } from "@/types/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Particles from "../ui/particles";
+import { Loader2 } from "lucide-react"
 
 export default function HomeChatArea({
   username,
@@ -40,17 +41,30 @@ export default function HomeChatArea({
   };
 
   return (
-    <>
-      <div className="h-screen flex flex-col p-4 overflow-hidden max-h-screen">
-        <Particles
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 md:p-8 lg:p-12 overflow-hidden">
+      <Particles
           className="absolute inset-0 -z-10 animate-fade-in"
           quantity={300}
         />
+      <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center">
         <HomeHero username={username} />
-        <Button onClick={() => onCreateStory()}>
-          {loading ? "Loading..." : "Create a Story"}
+
+        <Button
+          onClick={onCreateStory}
+          disabled={loading}
+          size="lg"
+          className="w-full md:w-auto px-8 py-6 text-lg font-medium rounded-xl bg-white text-gray-800 hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 border border-gray-200"
+        >
+          {loading ? (
+            <span className="flex items-center gap-2">
+              <Loader2 className="h-5 w-5 animate-spin text-gray-800" />
+              Creating your story...
+            </span>
+          ) : (
+            <span className="flex items-center gap-2">Create a Story</span>
+          )}
         </Button>
       </div>
-    </>
+    </div>
   );
 }
