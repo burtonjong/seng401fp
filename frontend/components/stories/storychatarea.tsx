@@ -1,16 +1,36 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { generateStoryline} from "@/utils/gemini/generate-response";
+import { useState, useEffect, useRef, Dispatch, SetStateAction } from "react";
+import {
+  generateStoryline,
+  generateStoryName,
+} from "@/utils/gemini/generate-response";
 import { Button } from "@/components/ui/button";
-import { ArrowUpCircle, X } from "lucide-react";
+import { ArrowUpCircle, Eye, X } from "lucide-react";
 import { gsap } from "gsap";
 import { cn } from "@/lib/utils";
-import { createMessage } from "@/api/stories/mutations";
+import {
+  createMessage,
+  createStory,
+  updateName,
+} from "@/api/stories/mutations";
 import { getStoryMessages } from "@/app/actions";
+import { Story, User } from "@/types/types";
+import Particles from "../ui/particles";
 
-export default function StoryChatPage({ storyID }: { storyID: string }) {
-  const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
+export default function StoryChatPage({
+  storyID,
+  userObject,
+  setStories,
+}: {
+  storyID: string;
+  userObject: User;
+  setStories: Dispatch<SetStateAction<Story[]>>;
+}) {
+  const [messages, setMessages] = useState<{ role: string; content: string }[]>(
+    []
+  );
+  const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [choices, setChoices] = useState<string[]>([]);
   const [showChoicesPopup, setShowChoicesPopup] = useState(false);
@@ -26,21 +46,23 @@ export default function StoryChatPage({ storyID }: { storyID: string }) {
       const fetchedMessages = await getStoryMessages(storyID);
       if (fetchedMessages) {
         const sortedMessages = fetchedMessages.sort((a, b) => {
-          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+          return (
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+          );
         });
 
         setMessages(
-          sortedMessages.map((msg: { role: any; content: any; }) => ({
+          sortedMessages.map((msg: { role: any; content: any }) => ({
             role: msg.role,
             content: msg.content,
           }))
         );
-    
-        if (sortedMessages.length > 0) {  
-          if(sortedMessages[sortedMessages.length - 1].role === "assistant"){
+
+        if (sortedMessages.length > 0) {
+          if (sortedMessages[sortedMessages.length - 1].role === "assistant") {
             handleGeminiOptions(sortedMessages);
           }
-          if(sortedMessages[sortedMessages.length - 1].role === "user"){
+          if (sortedMessages[sortedMessages.length - 1].role === "user") {
             handleGeminiResponse(sortedMessages);
           }
         }
@@ -53,7 +75,7 @@ export default function StoryChatPage({ storyID }: { storyID: string }) {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-  
+
   const handleOptionClick = async (option: string) => {
     const newMessages = [...messages, { role: "user", content: option }];
     setMessages(newMessages);
@@ -63,16 +85,18 @@ export default function StoryChatPage({ storyID }: { storyID: string }) {
     } catch (error) {
       console.error("Error saving user message:", error);
     }
-  
+
     await handleGeminiResponse(newMessages);
   };
-  
-  const handleGeminiResponse = async (currentMessages: { role: string; content: string }[]) => {
+
+  const handleGeminiResponse = async (
+    currentMessages: { role: string; content: string }[]
+  ) => {
     setLoading(true);
-  
+
     try {
       const geminiResponse = await generateStoryline(currentMessages);
-  
+
       if (geminiResponse) {
         const assistantMessage = geminiResponse.response;
         const assistantChoices = [
@@ -80,9 +104,13 @@ export default function StoryChatPage({ storyID }: { storyID: string }) {
           geminiResponse.choice2,
           geminiResponse.choice3,
         ];
-  
-        await createMessage({ storyID, role: "assistant", content: assistantMessage });
-  
+
+        await createMessage({
+          storyID,
+          role: "assistant",
+          content: assistantMessage,
+        });
+
         setMessages([
           ...currentMessages,
           { role: "assistant", content: assistantMessage },
@@ -92,39 +120,44 @@ export default function StoryChatPage({ storyID }: { storyID: string }) {
     } catch (error) {
       console.error("Error during Gemini response:", error);
     }
-  
+
     setLoading(false);
   };
-  
-  const handleGeminiOptions = async (currentMessages: { role: string; content: string }[]) => {
+
+  const handleGeminiOptions = async (
+    currentMessages: { role: string; content: string }[]
+  ) => {
     setLoading(true);
-  
+
     try {
       const geminiResponse = await generateStoryline(currentMessages);
-  
+
       if (geminiResponse) {
         const assistantChoices = [
           geminiResponse.choice1,
           geminiResponse.choice2,
           geminiResponse.choice3,
         ];
-  
+
         setChoices(assistantChoices);
       }
     } catch (error) {
       console.error("Error during Gemini response:", error);
     }
-  
+
     setLoading(false);
   };
 
   useEffect(() => {
     const textElements = document.querySelectorAll(".assistant-message");
 
+    let lastAnimation = null;
+
     textElements.forEach((element, index) => {
       if (alreadyAnimated.current.has(index)) return;
 
       const text = element.textContent || "";
+
       element.innerHTML = text
         .split("")
         .map((char) => `<span class="char">${char}</span>`)
@@ -132,7 +165,7 @@ export default function StoryChatPage({ storyID }: { storyID: string }) {
 
       const chars = element.querySelectorAll(".char");
 
-      gsap.fromTo(
+      lastAnimation = gsap.fromTo(
         chars,
         { opacity: 0 },
         {
@@ -151,8 +184,139 @@ export default function StoryChatPage({ storyID }: { storyID: string }) {
     });
   }, [messages]);
 
+  const handleSendMessage = async (user: User, inputOption?: string) => {
+    const messageContent = inputOption || input;
+    if (!messageContent.trim()) return;
+
+    const newMessages = [
+      ...messages,
+      { role: "user", content: messageContent },
+    ];
+
+    setMessages(newMessages);
+    setLoading(true);
+
+    if (messages.length === 0) {
+      if (user) {
+        try {
+          await createMessage({
+            storyID: storyID,
+            role: "user",
+            content: messageContent,
+          });
+        } catch (error) {
+          console.error("Error saving initial message:", error);
+        }
+
+        const geminiResponse = await generateStoryline(newMessages);
+
+        if (geminiResponse) {
+          const assistantMessage = geminiResponse.response;
+          const assistantChoices = [
+            geminiResponse.choice1,
+            geminiResponse.choice2,
+            geminiResponse.choice3,
+          ];
+
+          try {
+            await createMessage({
+              storyID: storyID,
+              role: "assistant",
+              content: assistantMessage,
+            });
+            console.log("Assistant message created");
+
+            const storyName = await generateStoryName(assistantMessage);
+            console.log(storyName);
+            try {
+              const response = await updateStoryName(storyID, storyName);
+              console.log(response);
+              setStories((prevStories) =>
+                prevStories.map((story) =>
+                  story.id === storyID ? { ...story, name: storyName } : story
+                )
+              );
+            } catch (error) {
+              console.error("Error updating story name:", error);
+            }
+          } catch (error) {
+            console.error("Error creating assistant message:", error);
+          }
+
+          setMessages([
+            ...newMessages,
+            { role: "assistant", content: assistantMessage },
+          ]);
+          setChoices(assistantChoices);
+        }
+      }
+    } else if (storyID) {
+      try {
+        await createMessage({
+          storyID,
+          role: "user",
+          content: messageContent,
+        });
+        console.log("User message saved");
+      } catch (error) {
+        console.error("Error saving user message:", error);
+      }
+
+      const geminiResponse = await generateStoryline(newMessages);
+
+      if (geminiResponse) {
+        const assistantMessage = geminiResponse.response;
+        const assistantChoices = [
+          geminiResponse.choice1,
+          geminiResponse.choice2,
+          geminiResponse.choice3,
+        ];
+
+        try {
+          await createMessage({
+            storyID,
+            role: "assistant",
+            content: assistantMessage,
+          });
+          console.log("Assistant message saved");
+        } catch (error) {
+          console.error("Error creating assistant message:", error);
+        }
+
+        setMessages([
+          ...newMessages,
+          { role: "assistant", content: assistantMessage },
+        ]);
+        setChoices(assistantChoices);
+      }
+    }
+
+    setLoading(false);
+    setInput("");
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage(userObject);
+    }
+  };
+
+  const updateStoryName = async (storyID: string, newName: string) => {
+    try {
+      const response = await updateName({ storyID: storyID, name: newName });
+      console.log(response);
+    } catch (error) {
+      console.error("Error updating story name:", error);
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col p-4 overflow-hidden max-h-screen">
+      <Particles
+        className="absolute inset-0 -z-10 animate-fade-in"
+        quantity={300}
+      />
       <div className="flex-1 overflow-y-auto mb-4 pr-4">
         <div className="flex flex-col space-y-4 w-full pr-4">
           {messages.map((message, index) => (
@@ -162,7 +326,9 @@ export default function StoryChatPage({ storyID }: { storyID: string }) {
             >
               <div
                 className={`max-w-lg p-3 rounded-xl ${
-                  message.role === "user" ? "bg-[#4A90E2] text-white" : "bg-[#333] text-white"
+                  message.role === "user"
+                    ? "bg-[#4A90E2] text-white"
+                    : "bg-[#333] text-white"
                 } ${message.role === "assistant" ? "assistant-message" : ""}`}
               >
                 {message.content}
@@ -233,16 +399,38 @@ export default function StoryChatPage({ storyID }: { storyID: string }) {
         </div>
       </div>
 
-      <div className="flex justify-center rounded-full border border-[#444] bg-[#1e1e1e] px-4 py-3">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 rounded-full bg-white text-black"
-          onClick={() => setShowChoicesPopup(true)}
-        >
-          <ArrowUpCircle className="h-5 w-5" />
-        </Button>
-      </div>
+      {messages.length === 0 ? (
+        <div className="flex items-center rounded-full border border-[#444] bg-[#1e1e1e] px-4 py-3">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Start an Odyssey"
+            className="flex-1 bg-transparent border-none outline-none px-3 text-white placeholder-gray-400"
+          />
+
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-full bg-white text-black"
+            onClick={() => handleSendMessage(userObject)}
+          >
+            <ArrowUpCircle className="h-5 w-5" />
+          </Button>
+        </div>
+      ) : (
+        <div className="flex justify-center rounded-full border border-[#444] bg-[#1e1e1e] px-4 py-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-full bg-white text-black"
+            onClick={() => setShowChoicesPopup(true)}
+          >
+            <Eye className="h-5 w-5" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
