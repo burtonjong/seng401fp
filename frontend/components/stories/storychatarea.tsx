@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import {
   generateStoryline,
   generateStoryName,
+  generateStoryIdea
 } from "@/utils/gemini/generate-response";
 import { Button } from "@/components/ui/button";
 import { ArrowUpCircle, X } from "lucide-react";
@@ -33,6 +34,8 @@ export default function StoryChatPage({
   const [showChoicesPopup, setShowChoicesPopup] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const alreadyAnimated = useRef<Set<number>>(new Set());
+  const [ideas, setIdeas] = useState(["Loading...", "Loading...", "Loading..."]);
+  const [buttonsVisible, setButtonsVisible] = useState(true);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -182,6 +185,7 @@ export default function StoryChatPage({
   }, [messages]);
 
   const handleSendMessage = async (user: User, inputOption?: string) => {
+    setButtonsVisible(false);
     const messageContent = inputOption || input;
     if (!messageContent.trim()) return;
 
@@ -303,8 +307,70 @@ export default function StoryChatPage({
     }
   };
 
+  const StoryIdeas = () => {
+  
+    useEffect(() => {
+      const fetchIdeas = async () => {
+        try {
+          const [idea1, idea2, idea3] = await Promise.all([
+            generateStoryIdea(),
+            generateStoryIdea(),
+            generateStoryIdea(),
+          ]);
+          setIdeas([idea1, idea2, idea3]);
+        } catch (error) {
+          console.error("Error fetching story ideas:", error);
+          setIdeas([
+            "Error loading idea",
+            "Error loading idea",
+            "Error loading idea",
+          ]);
+        }
+      };
+  
+      fetchIdeas();
+    }, []);
+  }    
+
+  StoryIdeas();
+
   return (
+    
     <div className="h-screen flex flex-col p-4 overflow-hidden max-h-screen">
+
+{buttonsVisible && (
+        <>
+          <div className="text-center mt-12 mb-32">
+            <h1 className="text-7xl font-bold text-white">
+              Some options to help get you started!
+            </h1>
+          </div>
+
+          <div className="w-screen px-2">
+  <div className="flex flex-col items-center justify-end flex-1 space-y-20 mb-12 w-5/6">
+    <button
+      className="bg-gray-500 text-white py-16 rounded-lg text-3xl w-full"
+      onClick={() => handleSendMessage(userObject, ideas[0])}
+    >
+      {ideas[0]}
+    </button>
+    <button
+      className="bg-gray-500 text-white py-16 rounded-lg text-3xl w-full"
+      onClick={() => handleSendMessage(userObject, ideas[1])}
+    >
+      {ideas[1]}
+    </button>
+    <button
+      className="bg-gray-500 text-white py-16 rounded-lg text-3xl w-full"
+      onClick={() => handleSendMessage(userObject, ideas[2])}
+    >
+      {ideas[2]}
+    </button>
+  </div>
+</div>
+        </>
+      )}
+
       <div className="flex-1 overflow-y-auto mb-4 pr-4">
         <div className="flex flex-col space-y-4 w-full pr-4">
           {messages.map((message, index) => (
