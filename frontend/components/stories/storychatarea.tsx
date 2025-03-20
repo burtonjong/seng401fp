@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Dispatch, SetStateAction } from "react";
 import {
   generateStoryline,
   generateStoryName,
@@ -15,14 +15,16 @@ import {
   updateName,
 } from "@/api/stories/mutations";
 import { getStoryMessages } from "@/app/actions";
-import { User } from "@/types/types";
+import { Story, User } from "@/types/types";
 
 export default function StoryChatPage({
   storyID,
   userObject,
+  setStories,
 }: {
   storyID: string;
   userObject: User;
+  setStories: Dispatch<SetStateAction<Story[]>>;
 }) {
   const [messages, setMessages] = useState<{ role: string; content: string }[]>(
     []
@@ -228,6 +230,11 @@ export default function StoryChatPage({
             try {
               const response = await updateStoryName(storyID, storyName);
               console.log(response);
+              setStories((prevStories) =>
+                prevStories.map((story) =>
+                  story.id === storyID ? { ...story, name: storyName } : story
+                )
+              );
             } catch (error) {
               console.error("Error updating story name:", error);
             }

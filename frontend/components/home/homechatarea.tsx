@@ -48,11 +48,11 @@ export default function HomeChatArea({
           onClick={onCreateStory}
           disabled={loading}
           size="lg"
-          className="w-full md:w-auto  px-8 py-6 text-lg font-medium rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+          className="w-full md:w-auto px-8 py-6 text-lg font-medium rounded-xl bg-white text-gray-800 hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 border border-gray-200"
         >
           {loading ? (
             <span className="flex items-center gap-2">
-              <Loader2 className="h-5 w-5 animate-spin" />
+              <Loader2 className="h-5 w-5 animate-spin text-gray-800" />
               Creating your story...
             </span>
           ) : (
