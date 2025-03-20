@@ -10,6 +10,7 @@ export interface Story{
     id: string
     created_at: string
     user: string
+    title: string
 }
 
 export interface Message{

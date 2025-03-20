@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -6,11 +6,11 @@ import { ListFilter, Menu, Plus, LogOut } from "lucide-react";
 import { signOutAction } from "@/app/actions";
 import { getUserDetails, getUserStories, deleteStory } from "@/app/actions";
 import { createStory } from "@/api/stories/mutations";
+import { useStories } from "@/contexts/StoryContext"; // Import the context hook
+import { Story } from "@/types/types";
 
 export const createStoryForUser = async (
-  setStories: React.Dispatch<
-    React.SetStateAction<{ id: string; title: string }[]>
-  >
+  setStories: React.Dispatch<React.SetStateAction<Story[]>>
 ) => {
   const user = await getUserDetails();
   if (user) {
@@ -19,9 +19,9 @@ export const createStoryForUser = async (
       console.log("Story created successfully");
 
       if ("id" in newStory) {
-        setStories((prevStories: { id: string; title: string }[]) => [
+        setStories((prevStories: Story[]) => [
           ...prevStories,
-          { id: newStory.id, title: "Story" }, // title is just story for now, we can maybe add a name for the story in the database later
+          { id: newStory.id, title: "Story", created_at: new Date().toISOString(), user: user.id },
         ]);
       }
 
@@ -48,20 +48,25 @@ export const createStoryForUser = async (
 
 export default function Sidebar() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [stories, setStories] = useState<{ id: string; title: string }[]>([]);
+  const { stories, setStories } = useStories(); // Access stories and setStories from context
 
   useEffect(() => {
     const fetchStories = async () => {
       const fetchedStories = await getUserStories();
       if (fetchedStories) {
         setStories(
-          fetchedStories.map((story) => ({ id: story.id, title: "Story" }))
-        ); // title is just story for now, we can maybe add a name for the story in the database later
+          fetchedStories.map((story) => ({
+            id: story.id,
+            title: "Story",
+            created_at: story.created_at,
+            user: story.user,
+          }))
+        );
       }
     };
 
     fetchStories();
-  }, []);
+  }, [setStories]); // Make sure to include setStories in the dependency array
 
   const handleDeleteStory = async (storyId: string) => {
     const success = await deleteStory(storyId); 
