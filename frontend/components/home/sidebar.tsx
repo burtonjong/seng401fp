@@ -9,11 +9,10 @@ import { signOutAction } from "@/app/actions";
 import { getUserDetails, getUserStories, deleteStory } from "@/app/actions";
 import { createStory } from "@/api/stories/mutations";
 import { useRouter } from "next/navigation";
+import { Story } from "@/types/types";
 
 export const createStoryForUser = async (
-  setStories: React.Dispatch<
-    React.SetStateAction<{ id: string; title: string }[]>
-  >
+  setStories: React.Dispatch<React.SetStateAction<Story[]>>
 ) => {
   const user = await getUserDetails();
   if (user) {
@@ -21,10 +20,15 @@ export const createStoryForUser = async (
       const newStory = await createStory({ user });
       console.log("Story created successfully");
 
-      if ("id" in newStory) {
-        setStories((prevStories: { id: string; title: string }[]) => [
+      if (newStory.success && newStory.story) {
+        setStories((prevStories: Story[]) => [
           ...prevStories,
-          { id: newStory.id, title: "Story" }, // title is just story for now, we can maybe add a name for the story in the database later
+          {
+            id: newStory.story.id,
+            title: "Story",
+            user: newStory.story.user,
+            created_at: newStory.story.created_at,
+          }, // title is just story for now, we can maybe add a name for the story in the database later
         ]);
       }
 
@@ -56,24 +60,22 @@ export default function Sidebar() {
     router.push("/home/profile");
   };
 
-  const handleSwitchStory = (params:{storyID:string}) => {
+  const handleSwitchStory = (params: { storyID: string }) => {
     router.push(`/stories/${params.storyID}`);
   };
 
   const handleNewChat = () => {
-    router.push("/home"); 
+    router.push("/home");
   };
-  
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [stories, setStories] = useState<{ id: string; title: string }[]>([]);
+  const [stories, setStories] = useState<Story[]>([]);
 
   useEffect(() => {
     const fetchStories = async () => {
       const fetchedStories = await getUserStories();
       if (fetchedStories) {
-        setStories(
-          fetchedStories.map((story) => ({ id: story.id, title: "Story" }))
-        ); // title is just story for now, we can maybe add a name for the story in the database later
+        setStories(fetchedStories); // title is just story for now, we can maybe add a name for the story in the database later
       }
     };
 
