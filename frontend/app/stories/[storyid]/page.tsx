@@ -5,18 +5,15 @@ import HomeHeader from "@/components/home/homeheader";
 import StoryChatPage from "@/components/stories/storychatarea";
 import * as React from 'react'
 
-type Props = {
-  params: { storyid: string };
-};
 
 export default async function StoryPage({
 params,
 }: {
-  params: Promise<{ storyId: string }>;
+  params: Promise<{ storyid: string }>;
 }) {
   const supabase = createClient();
 
-  const storyId  = (await params).storyId
+  const storyid  = (await params).storyid
 
   const { data: { user } } = await (await supabase).auth.getUser();
 
@@ -30,7 +27,7 @@ params,
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden h-full">
         <HomeHeader />
-        <StoryChatPage storyID={storyId} />
+        <StoryChatPage storyID={storyid} />
       </div>
     </div>
   );

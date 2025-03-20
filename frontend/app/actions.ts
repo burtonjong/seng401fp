@@ -191,8 +191,8 @@ export const deleteStory = async (storyId: string): Promise<boolean> => {
 
   return true;
 };
-export
- const getStoryMessages = async (story_id: string): Promise<Message[] | null> => {
+
+export const getStoryMessages = async (story_id: string): Promise<Message[] | null> => {
   const supabase = await createClient();
 
   const { data: messages, error } = await supabase.from("messages").select("*").eq("story_id", story_id);
