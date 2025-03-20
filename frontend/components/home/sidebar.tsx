@@ -16,7 +16,7 @@ export default function Sidebar({
   storyId,
 }: {
   userObject: User;
-  storyId: string;
+  storyId?: string;
 }) {
   const router = useRouter();
 

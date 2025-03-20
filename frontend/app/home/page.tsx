@@ -21,11 +21,11 @@ export default async function Main() {
   const username = await getUsername();
   const userId = user.id;
 
-  const userObject = await getUser(userId) as User;
+  const userObject = (await getUser(userId)) as User;
 
   return (
     <div className="fixed inset-0 flex bg-black text-white">
-      <Sidebar userObject={userObject}/>
+      <Sidebar userObject={userObject} />
       <div className="flex-1 flex flex-col overflow-hidden h-full">
         <HomeHeader />
         <HomeChatArea userObject={userObject} username={username} />
