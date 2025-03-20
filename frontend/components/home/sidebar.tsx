@@ -6,91 +6,11 @@ import { Button } from "@/components/ui/button";
 import { ListFilter, Menu, Plus, LogOut, User2 } from "lucide-react";
 
 import { signOutAction } from "@/app/actions";
-import { getUserDetails, getUserStories, deleteStory } from "@/app/actions";
+import { getUserStories, deleteStory } from "@/app/actions";
 import { createStory } from "@/api/stories/mutations";
 import { useRouter } from "next/navigation";
 import { Story, User } from "@/types/types";
 import { createClient } from "@/utils/supabase/client";
-
-export const createStoryForUser = async (
-	setStories: React.Dispatch<React.SetStateAction<Story[]>>
-) => {
-	const user = await getUserDetails();
-	if (user) {
-		try {
-			const newStory = await createStory({ user });
-			console.log("Story created successfully");
-
-			if (newStory.success && newStory.story) {
-				setStories((prevStories: Story[]) => [
-					...prevStories,
-					{
-						id: newStory.story.id,
-						user: newStory.story.user,
-						created_at: newStory.story.created_at,
-						name: "Story",
-					}, // title is just story for now, we can maybe add a name for the story in the database later
-				]);
-			}
-
-			// Check if user has created 5 stories for an achievement
-			const supabase = await createClient();
-			const { data: stories, error: storiesError } = await supabase
-				.from("stories")
-				.select("*")
-				.eq("user_id", user.id);
-
-			if (storiesError) {
-				console.error("Error fetching stories:", storiesError);
-				return;
-			}
-
-			if (stories.length >= 5) {
-				const { data: achievements, error: achievementsError } = await supabase
-					.from("achievements")
-					.select("*")
-					.eq("user_id", user.id)
-					.eq("achievement", "Created 5 Stories");
-
-				if (achievementsError) {
-					console.error("Error fetching achievements:", achievementsError);
-					return;
-				}
-
-				if (achievements.length === 0) {
-					//if they do not have this particular achievement yet
-					const { error: achievementError } = await supabase
-						.from("achievements")
-						.insert([{ user_id: user.id, achievement: "Created 5 Stories" }]);
-
-					if (achievementError) {
-						console.error("Error adding achievement:", achievementError);
-					} else {
-						console.log("Achievement added: Created 5 Stories");
-					}
-				}
-			}
-
-			return newStory;
-		} catch (error) {
-			console.error("Error creating story:", error);
-			return {
-				error: {
-					message: `Error creating story: ${error}`,
-				},
-				statusCode: 500,
-			};
-		}
-	} else {
-		console.error("No user is logged in");
-		return {
-			error: {
-				message: "No user is logged in",
-			},
-			statusCode: 400,
-		};
-	}
-};
 
 export default function Sidebar({
 	userObject,
@@ -111,17 +31,97 @@ export default function Sidebar({
 	const [stories, setStories] = useState<Story[]>(initialStories || []);
 
 	useEffect(() => {
-		const fetchStories = async () => {
-			const fetchedStories = await getUserStories();
-			if (fetchedStories) {
-				setStories(fetchedStories);
-			}
-		};
+    const fetchStories = async () => {
+        const fetchedStories = await getUserStories();
+        if (fetchedStories) {
+            setStories(fetchedStories);
+            setParentStories?.(fetchedStories);
+        }
+    };
+    fetchStories();
+  }, []);
 
-		if (!initialStories) {
-			fetchStories();
+	const createStoryForUser = async (
+		user: User,
+		setStories: React.Dispatch<React.SetStateAction<Story[]>>
+	) => {
+		if (user) {
+			try {
+				const newStory = await createStory(user);
+				console.log("Story created successfully");
+
+				if (newStory.success && newStory.story) {
+					setStories((prevStories: Story[]) => [
+						...prevStories,
+						{
+							id: newStory.story.id,
+							user: newStory.story.user,
+							created_at: newStory.story.created_at,
+							name: "Story",
+						},
+					]);
+				}
+
+				// Check if user has created 5 stories for an achievement
+				const supabase = await createClient();
+				const { data: stories, error: storiesError } = await supabase
+					.from("stories")
+					.select("*")
+					.eq("user_id", user.id);
+
+				if (storiesError) {
+					console.error("Error fetching stories:", storiesError);
+					return;
+				}
+
+        console.log("stories length", stories.length);
+				if (stories.length >= 5) {
+					const { data: achievements, error: achievementsError } =
+						await supabase
+							.from("achievements")
+							.select("*")
+							.eq("user_id", user.id)
+							.eq("achievement", "Created 5 Stories");
+
+					if (achievementsError) {
+						console.error("Error fetching achievements:", achievementsError);
+						return;
+					}
+
+					if (achievements.length === 0) {
+						// If they do not have this particular achievement yet
+						const { error: achievementError } = await supabase
+							.from("achievements")
+							.insert([{ user_id: user.id, achievement: "Created 5 Stories" }]);
+
+						if (achievementError) {
+							console.error("Error adding achievement:", achievementError);
+						} else {
+							console.log("Achievement added: Created 5 Stories");
+						}
+					}
+				}
+
+				return newStory;
+			} catch (error) {
+				console.error("Error creating story:", error);
+				return {
+					error: {
+						message: `Error creating story: ${error}`,
+					},
+					statusCode: 500,
+				};
+			}
+		} else {
+			console.error("No user is logged in");
+			return {
+				error: {
+					message: "No user is logged in",
+				},
+				statusCode: 400,
+			};
 		}
-	}, [initialStories]);
+	};
 
 	const handleProfile = () => {
 		router.push("/home/profile");
@@ -167,8 +167,10 @@ export default function Sidebar({
 			<div className="px-4 py-2">
 				<Button
 					variant="ghost"
-					className={`w-full justify-start gap-3 rounded-full bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white ${!sidebarOpen && "justify-center"}`}
-					onClick={() => createStoryForUser(setStories)}
+					className={`w-full justify-start gap-3 rounded-full bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white ${
+						!sidebarOpen && "justify-center"
+					}`}
+					onClick={() => createStoryForUser(userObject, setStories)}
 				>
 					<Plus className="h-5 w-5" />
 					{sidebarOpen && (
@@ -186,7 +188,9 @@ export default function Sidebar({
 						<div key={story.id} className={`flex items-center justify-between`}>
 							<Button
 								variant="ghost"
-								className={`w-full justify-start gap-3 py-2 text-[#e0e0e0] hover:bg-[#2a2a2a] ${!sidebarOpen && "justify-center"} ${story.id === storyId && "bg-[#2a2a2a] text-white"}`}
+								className={`w-full justify-start gap-3 py-2 text-[#e0e0e0] hover:bg-[#2a2a2a] ${
+									!sidebarOpen && "justify-center"
+								} ${story.id === storyId && "bg-[#2a2a2a] text-white"}`}
 								onClick={() => handleSwitchStory({ storyID: story.id })}
 							>
 								<ListFilter className="h-5 w-5 flex-shrink-0" />
@@ -214,19 +218,11 @@ export default function Sidebar({
 			</div>
 
 			<div className="mt-auto px-4 py-4 space-y-1">
-				<Button
-					variant="ghost"
-					className={`w-full justify-start gap-3 py-2 text-[#e0e0e0] hover:bg-[#2a2a2a] relative ${!sidebarOpen && "justify-center"}`}
-					onClick={handleProfile}
-				>
+				<Button variant="ghost" className="w-full gap-3" onClick={handleProfile}>
 					<User2 className="h-5 w-5" />
 					{sidebarOpen && <span>Profile</span>}
 				</Button>
-				<Button
-					variant="ghost"
-					className={`w-full justify-start gap-3 py-2 text-[#e0e0e0] hover:bg-[#2a2a2a] relative ${!sidebarOpen && "justify-center"}`}
-					onClick={signOutAction}
-				>
+				<Button variant="ghost" className="w-full gap-3" onClick={signOutAction}>
 					<LogOut className="h-5 w-5" />
 					{sidebarOpen && <span>Logout</span>}
 				</Button>
