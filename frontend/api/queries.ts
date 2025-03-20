@@ -1,4 +1,4 @@
-import { type User, Message, Story } from "@/types/types";
+import { type User, Message, Story, Achievement } from "@/types/types";
 import { fetchApi } from "@/lib/axios";
 
 export async function getUser(
@@ -94,4 +94,53 @@ export async function getAllStories(): Promise<
       statusCode: 500,
     };
   }
+}
+
+export async function getUserAchievements(
+	userId: string
+): Promise<Achievement[] | { error: { message: string }; statusCode: number }> {
+	try {
+		const response = await fetchApi<Achievement[]>(
+			`/api/achievements/${userId}`,
+			{
+				method: "GET",
+			}
+		);
+		return response;
+	} catch (error) {
+		console.error("Error fetching achievements:", error);
+		return {
+			error: {
+				message: `Could not fetch achievements: ${error}`,
+			},
+			statusCode: 500,
+		};
+	}
+}
+
+export async function checkUserAchievement(
+	userId: string,
+	achievementName: string
+): Promise<
+	| { exists: boolean; achievement?: Achievement }
+	| { error: { message: string }; statusCode: number }
+> {
+	try {
+		const response = await fetchApi<{
+			exists: boolean;
+			achievement?: Achievement;
+		}>(
+			`/api/achievements/${userId}/check?achievement=${encodeURIComponent(achievementName)}`,
+			{ method: "GET" }
+		);
+		return response;
+	} catch (error) {
+		console.error("Error checking achievement:", error);
+		return {
+			error: {
+				message: `Could not check achievement: ${error}`,
+			},
+			statusCode: 500,
+		};
+	}
 }

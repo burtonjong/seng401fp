@@ -10,7 +10,8 @@ import { getUserStories, deleteStory } from "@/app/actions";
 import { createStory } from "@/api/stories/mutations";
 import { useRouter } from "next/navigation";
 import { Story, User } from "@/types/types";
-import { createClient } from "@/utils/supabase/client";
+import { checkUserAchievement } from "@/api/queries";
+import { addUserAchievement } from "@/api/achievements/mutations";
 
 export default function Sidebar({
 	userObject,
@@ -31,15 +32,15 @@ export default function Sidebar({
 	const [stories, setStories] = useState<Story[]>(initialStories || []);
 
 	useEffect(() => {
-    const fetchStories = async () => {
-        const fetchedStories = await getUserStories();
-        if (fetchedStories) {
-            setStories(fetchedStories);
-            setParentStories?.(fetchedStories);
-        }
-    };
-    fetchStories();
-  }, []);
+		const fetchStories = async () => {
+			const fetchedStories = await getUserStories();
+			if (fetchedStories) {
+				setStories(fetchedStories);
+				setParentStories?.(fetchedStories);
+			}
+		};
+		fetchStories();
+	}, []);
 
 	const createStoryForUser = async (
 		user: User,
@@ -63,43 +64,41 @@ export default function Sidebar({
 				}
 
 				// Check if user has created 5 stories for an achievement
-				const supabase = await createClient();
-				const { data: stories, error: storiesError } = await supabase
-					.from("stories")
-					.select("*")
-					.eq("user_id", user.id);
+				try {
+					const storyResponse = await getUserStories();
+					const stories = storyResponse || [];
 
-				if (storiesError) {
-					console.error("Error fetching stories:", storiesError);
-					return;
-				}
+					console.log("stories length", stories.length);
+					if (stories.length >= 5) {
+						// Check if they already have this achievement
+						const achievementResponse = await checkUserAchievement(
+							user.id,
+							"Created 5 Stories"
+						);
 
-        console.log("stories length", stories.length);
-				if (stories.length >= 5) {
-					const { data: achievements, error: achievementsError } =
-						await supabase
-							.from("achievements")
-							.select("*")
-							.eq("user_id", user.id)
-							.eq("achievement", "Created 5 Stories");
+						if (
+							!("error" in achievementResponse) &&
+							!achievementResponse.exists
+						) {
+							// If they don't have the achievement yet, add it
+							const addAchievementResponse = await addUserAchievement(
+								user.id,
+								"Created 5 Stories"
+							);
 
-					if (achievementsError) {
-						console.error("Error fetching achievements:", achievementsError);
-						return;
-					}
-
-					if (achievements.length === 0) {
-						// If they do not have this particular achievement yet
-						const { error: achievementError } = await supabase
-							.from("achievements")
-							.insert([{ user_id: user.id, achievement: "Created 5 Stories" }]);
-
-						if (achievementError) {
-							console.error("Error adding achievement:", achievementError);
-						} else {
-							console.log("Achievement added: Created 5 Stories");
+							if (!("error" in addAchievementResponse)) {
+								console.log("Achievement added: Created 5 Stories");
+							} else {
+								console.error(
+									"Error adding achievement:",
+									addAchievementResponse.error
+								);
+							}
 						}
 					}
+				} catch (achievementError) {
+					// Log achievement errors but don't block story creation
+					console.error("Achievement processing error:", achievementError);
 				}
 
 				return newStory;
@@ -218,11 +217,19 @@ export default function Sidebar({
 			</div>
 
 			<div className="mt-auto px-4 py-4 space-y-1">
-				<Button variant="ghost" className="w-full gap-3" onClick={handleProfile}>
+				<Button
+					variant="ghost"
+					className="w-full gap-3"
+					onClick={handleProfile}
+				>
 					<User2 className="h-5 w-5" />
 					{sidebarOpen && <span>Profile</span>}
 				</Button>
-				<Button variant="ghost" className="w-full gap-3" onClick={signOutAction}>
+				<Button
+					variant="ghost"
+					className="w-full gap-3"
+					onClick={signOutAction}
+				>
 					<LogOut className="h-5 w-5" />
 					{sidebarOpen && <span>Logout</span>}
 				</Button>
