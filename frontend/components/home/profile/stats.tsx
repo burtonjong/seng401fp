@@ -7,13 +7,16 @@ import {
 } from "@/components/ui/card";
 import { User } from "@/types/types";
 import { Clock, Book } from "lucide-react";
+import Achievements from "./achievements";
 
 export default function Stats({
   userData,
   createdAt,
+  userId,
 }: {
   userData: User;
   createdAt: string;
+  userId: string;
 }) {
   const daysSinceJoined = Math.floor(
     (new Date().getTime() - new Date(createdAt).getTime()) / (1000 * 3600 * 24)
@@ -46,6 +49,7 @@ export default function Stats({
               <p className="text-sm text-muted-foreground">{stat.label}</p>
             </div>
           ))}
+          <Achievements userId={userId} />
         </div>
       </CardContent>
     </Card>

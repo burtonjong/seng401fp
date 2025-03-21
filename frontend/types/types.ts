@@ -27,3 +27,10 @@ export interface UserDetails {
   username: string;
   email?: string;
 }
+
+export interface Achievement {
+	id: number;
+	userId: string;
+	achievement: string;
+	createdAt: string;
+}

@@ -9,6 +9,8 @@ import { signOutAction } from "@/app/actions";
 import { createStory, deleteStory } from "@/api/stories/mutations";
 import { useRouter } from "next/navigation";
 import { Story, User } from "@/types/types";
+import { checkUserAchievement, getUserStories } from "@/api/queries";
+import { addUserAchievement } from "@/api/achievements/mutations";
 
 export default function Sidebar({
   userObject,
@@ -57,6 +59,44 @@ export default function Sidebar({
       setLoading(true);
       const newStory = await createStory(user);
       console.log("Story created successfully");
+      // Check if user has created 5 stories for an achievement
+      try {
+        const storyResponse = (await getUserStories(user.id)) as Story[];
+        const stories = storyResponse || [];
+
+        console.log("stories length", stories.length);
+        if (stories.length >= 5) {
+          // Check if they already have this achievement
+          const achievementResponse = await checkUserAchievement(
+            user.id,
+            "Created 5 Stories"
+          );
+
+          if (
+            !("error" in achievementResponse) &&
+            !achievementResponse.exists
+          ) {
+            // If they don't have the achievement yet, add it
+            const addAchievementResponse = await addUserAchievement(
+              user.id,
+              "Created 5 Stories"
+            );
+
+            if (!("error" in addAchievementResponse)) {
+              console.log("Achievement added: Created 5 Stories");
+            } else {
+              console.error(
+                "Error adding achievement:",
+                addAchievementResponse.error
+              );
+            }
+          }
+        }
+      } catch (achievementError) {
+        // Log achievement errors but don't block story creation
+        console.error("Achievement processing error:", achievementError);
+      }
+
       if (newStory.success && newStory.story) {
         router.push(`/stories/${newStory.story.id}`);
       }

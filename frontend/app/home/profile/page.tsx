@@ -41,7 +41,7 @@ export default async function ProfilePage() {
 
       <div className="flex flex-col items-center w-full gap-4">
         <UserDetails user={user} username={username} />
-        <Stats userData={userData} createdAt={user.created_at} />
+        <Stats userData={userData} createdAt={user.created_at} userId={user.id} />
       </div>
     </div>
   );
