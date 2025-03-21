@@ -14,10 +14,10 @@ import {
   createStory,
   updateName,
 } from "@/api/stories/mutations";
-import { getStoryMessages } from "@/app/actions";
-import { Story, User } from "@/types/types";
+import { Message, Story, User } from "@/types/types";
 import Particles from "../ui/particles";
-import { get } from "http";
+import { motion } from "framer-motion";
+import { getStoryMessages } from "@/api/queries";
 
 export default function StoryChatPage({
   storyID,
@@ -63,7 +63,7 @@ export default function StoryChatPage({
 
   useEffect(() => {
     const fetchMessages = async () => {
-      const fetchedMessages = await getStoryMessages(storyID);
+      const fetchedMessages = (await getStoryMessages(storyID)) as Message[];
       if (fetchedMessages) {
         const sortedMessages = fetchedMessages.sort((a, b) => {
           return (
@@ -347,36 +347,45 @@ export default function StoryChatPage({
   }, []);
 
   return (
-    <div className="h-screen flex flex-col p-4 overflow-hidden max-h-screen">
+    <div className="h-screen flex flex-col p-4 overflow-hidden max-h-screen bg-gradient-to-tl from-black via-zinc-800/30 to-black">
       {buttonsVisible && (
         <>
-          <div className="text-center mt-12 mb-32">
-            <h1 className="text-7xl font-bold text-white">
-              Some options to help get you started!
-            </h1>
-          </div>
+          <div className="w-full max-w-4xl mx-auto flex flex-col mt-20 items-center text-center h-full">
+            <div className="text-center mt-12 mb-16">
+              <h1 className="md:text-3xl sm:text-xl  lg:text-5xl font-bold text-white">
+                Some options to help get you started.
+              </h1>
+              <div className="border-t border-b border-[#2a2a2a] w-full mt-3" />
+            </div>
 
-          <div className="w-screen px-2">
-            <div className="flex flex-col items-center justify-end flex-1 space-y-20 mb-12 w-5/6">
-              <button
-                className="bg-gray-500 text-white py-16 rounded-lg text-3xl w-full"
+            <motion.div
+              className="flex md:flex-row flex-col justify-around w-full"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <Button
+                variant="secondary"
+                className="size-40 text-wrap"
                 onClick={() => handleSendMessage(userObject, randomSubArray[0])}
               >
                 {randomSubArray[0]}
-              </button>
-              <button
-                className="bg-gray-500 text-white py-16 rounded-lg text-3xl w-full"
+              </Button>
+              <Button
+                variant="secondary"
+                className="size-40 text-wrap"
                 onClick={() => handleSendMessage(userObject, randomSubArray[1])}
               >
                 {randomSubArray[1]}
-              </button>
-              <button
-                className="bg-gray-500 text-white py-16 rounded-lg text-3xl w-full"
+              </Button>
+              <Button
+                variant="secondary"
+                className="size-40 text-wrap"
                 onClick={() => handleSendMessage(userObject, randomSubArray[2])}
               >
                 {randomSubArray[2]}
-              </button>
-            </div>
+              </Button>
+            </motion.div>
           </div>
         </>
       )}
@@ -474,7 +483,7 @@ export default function StoryChatPage({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Start an Odyssey"
+            placeholder="Or, start an Odyssey on your own..."
             className="flex-1 bg-transparent border-none outline-none px-3 text-white placeholder-gray-400"
           />
 

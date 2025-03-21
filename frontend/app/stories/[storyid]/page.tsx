@@ -28,7 +28,11 @@ export default async function StoryPage({
 
   return (
     <div className="fixed inset-0 flex bg-black text-white">
-      <StoryContainer userObject={userObject} storyid={storyid} />
+      <StoryContainer
+        userObject={userObject}
+        storyid={storyid}
+        userId={user.id}
+      />
     </div>
   );
 }
