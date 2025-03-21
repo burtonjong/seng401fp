@@ -29,7 +29,7 @@ export default function StoryContainer({
 
   return (
     <>
-      <Sidebar userObject={userObject} storyId={storyid} stories={stories} />
+      <Sidebar userObject={userObject} storyId={storyid} stories={stories} setStories={setStories} />
       <div className="flex-1 flex flex-col overflow-hidden h-full">
         <HomeHeader />
         <StoryChatPage
