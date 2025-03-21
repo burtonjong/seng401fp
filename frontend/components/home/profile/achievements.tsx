@@ -63,7 +63,7 @@ export default function Achievements({ userId }: AchievementsProps) {
 						))}
 					</ul>
 				) : (
-					<p>No achievements yet. Keep using the app to earn some!</p>
+					<p>No achievements yet. Keep using the app to earn some! Hint: Try creating 5 stories </p>
 				))}
 		</div>
 	);

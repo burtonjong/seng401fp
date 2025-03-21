@@ -42,6 +42,7 @@ public class SecurityConfig {
                     .requestMatchers("/stories/**").permitAll() // Allow public access to auth endpoints
                     .requestMatchers("/messages/**").permitAll() // Allow public access to movies endpoints
                     .requestMatchers("/users/**").permitAll() // Allow public access to email endpoints
+                    .requestMatchers("/api/achievements/**").permitAll()
                     .anyRequest().authenticated());  // Secure all other routes
  // Secure all other routes
         return http.build();
