@@ -1,28 +1,27 @@
 "use client";
 
-import { useState, useEffect, Dispatch, SetStateAction } from "react";
+import { useState, Dispatch, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
 
 import { ListFilter, Menu, Plus, LogOut, User2, Home } from "lucide-react";
 
 import { signOutAction } from "@/app/actions";
-import { createStory } from "@/api/stories/mutations";
 import { createStory, deleteStory } from "@/api/stories/mutations";
 import { useRouter } from "next/navigation";
 import { Story, User } from "@/types/types";
-import { checkUserAchievement } from "@/api/queries";
+import { checkUserAchievement, getUserStories } from "@/api/queries";
 import { addUserAchievement } from "@/api/achievements/mutations";
 
 export default function Sidebar({
-	userObject,
-	storyId,
-	stories: initialStories,
-	setStories: setParentStories,
+  userObject,
+  storyId,
+  stories,
+  setStories,
 }: {
-	userObject: User;
-	storyId?: string;
-	stories?: Story[];
-	setStories?: Dispatch<SetStateAction<Story[]>>;
+  userObject: User;
+  storyId?: string;
+  stories?: Story[];
+  setStories?: Dispatch<SetStateAction<Story[]>>;
 }) {
   const router = useRouter();
 
@@ -61,43 +60,43 @@ export default function Sidebar({
       const newStory = await createStory(user);
       console.log("Story created successfully");
       // Check if user has created 5 stories for an achievement
-			try {
-          const storyResponse = await getUserStories();
-          const stories = storyResponse || [];
+      try {
+        const storyResponse = (await getUserStories(user.id)) as Story[];
+        const stories = storyResponse || [];
 
-          console.log("stories length", stories.length);
-          if (stories.length >= 5) {
-            // Check if they already have this achievement
-            const achievementResponse = await checkUserAchievement(
+        console.log("stories length", stories.length);
+        if (stories.length >= 5) {
+          // Check if they already have this achievement
+          const achievementResponse = await checkUserAchievement(
+            user.id,
+            "Created 5 Stories"
+          );
+
+          if (
+            !("error" in achievementResponse) &&
+            !achievementResponse.exists
+          ) {
+            // If they don't have the achievement yet, add it
+            const addAchievementResponse = await addUserAchievement(
               user.id,
               "Created 5 Stories"
             );
 
-            if (
-              !("error" in achievementResponse) &&
-              !achievementResponse.exists
-            ) {
-                // If they don't have the achievement yet, add it
-              const addAchievementResponse = await addUserAchievement(
-                user.id,
-                "Created 5 Stories"
+            if (!("error" in addAchievementResponse)) {
+              console.log("Achievement added: Created 5 Stories");
+            } else {
+              console.error(
+                "Error adding achievement:",
+                addAchievementResponse.error
               );
-
-              if (!("error" in addAchievementResponse)) {
-                console.log("Achievement added: Created 5 Stories");
-              } else {
-                console.error(
-                  "Error adding achievement:",
-                  addAchievementResponse.error
-                );
-              }
             }
           }
-        } catch (achievementError) {
-          // Log achievement errors but don't block story creation
-          console.error("Achievement processing error:", achievementError);
         }
-      
+      } catch (achievementError) {
+        // Log achievement errors but don't block story creation
+        console.error("Achievement processing error:", achievementError);
+      }
+
       if (newStory.success && newStory.story) {
         router.push(`/stories/${newStory.story.id}`);
       }
@@ -111,8 +110,6 @@ export default function Sidebar({
       };
     }
   };
-    
-
 
   return (
     <div
