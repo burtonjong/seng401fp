@@ -1,5 +1,4 @@
-import { getUser } from "@/api/queries";
-import { getUsername } from "@/app/actions";
+import { getUser, getUsername } from "@/api/queries";
 import Stats from "@/components/home/profile/stats";
 import UserDetails from "@/components/home/profile/userdetails";
 import { Button } from "@/components/ui/button";
@@ -19,7 +18,7 @@ export default async function ProfilePage() {
     return redirect("/sign-in");
   }
 
-  const username = await getUsername();
+  const username = await getUsername(user.id);
 
   // scuffed but its ok
   const userData = (await getUser(user.id)) as User;

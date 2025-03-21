@@ -30,6 +30,13 @@ public class UserController {
         return userRepository.findAll();
     }
 
+    @GetMapping("/username/{id}")
+    public String getUsername(@PathVariable UUID id) {
+        return userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found"))
+            .getUsername();
+    }
+
     @GetMapping("/{id}")
     public User getUserById(@PathVariable UUID id) {
         return userRepository.findById(id)

@@ -95,3 +95,20 @@ export async function getAllStories(): Promise<
     };
   }
 }
+
+export const getUsername = async (id: string) => {
+  try {
+    const response = await fetchApi<string>(`/users/username/${id}`, {
+      method: "GET",
+    });
+    return response;
+  } catch (error) {
+    console.error("Error fetching username:", error);
+    return {
+      error: {
+        message: `Could not fetch username: ${error}`,
+      },
+      statusCode: 500,
+    };
+  }
+};

@@ -1,7 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { getUsername } from "../actions";
-import { getUser } from "@/api/queries";
+import { getUser, getUsername } from "@/api/queries";
 import { User } from "@/types/types";
 import HomeContainer from "@/components/home/homecontainer";
 
@@ -16,7 +15,7 @@ export default async function Main() {
     return redirect("/sign-in");
   }
 
-  const username = await getUsername();
+  const username = await getUsername(user.id);
   const userId = user.id;
 
   const userObject = (await getUser(userId)) as User;

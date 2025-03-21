@@ -137,27 +137,6 @@ export const signOutAction = async () => {
   return redirect("/");
 };
 
-export const getUsername = async () => {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const { data, error } = await supabase
-    .from("users")
-    .select("username")
-    .eq("id", user?.id)
-    .single();
-
-  if (error) {
-    console.error("Error fetching user:", error);
-  } else {
-    console.log("User:", data);
-  }
-
-  return data?.username;
-};
-
 export const getUserDetails = async (): Promise<UserDetails | null> => {
   const supabase = await createClient();
   const {
