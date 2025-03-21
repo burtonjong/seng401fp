@@ -2,6 +2,7 @@ import { getUser, getUsername } from "@/api/queries";
 import Stats from "@/components/home/profile/stats";
 import UserDetails from "@/components/home/profile/userdetails";
 import { Button } from "@/components/ui/button";
+import Particles from "@/components/ui/particles";
 import { User } from "@/types/types";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
@@ -25,6 +26,10 @@ export default async function ProfilePage() {
 
   return (
     <div className="container mx-auto py-8 px-4 w-[75dvw] flex items-center flex-col">
+      <Particles
+        className="absolute inset-0 -z-10 animate-fade-in"
+        quantity={1000}
+      />
       <div className="flex flex-row justify-between w-1/2 mb-4 items-center ">
         <h1 className="text-3xl font-bold">My Profile</h1>
         <Button>

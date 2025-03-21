@@ -41,7 +41,7 @@ export default function HomeChatArea({
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-around p-6 md:p-8 lg:p-12 overflow-hidden">
+    <div className="min-h-screen flex flex-col justify-around p-6 md:p-8 lg:p-12 overflow-hidden bg-gradient-to-tl from-black via-zinc-800/30 to-black">
       <Particles
         className="absolute inset-0 -z-10 animate-fade-in"
         quantity={300}

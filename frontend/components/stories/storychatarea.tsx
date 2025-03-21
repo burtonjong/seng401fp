@@ -347,7 +347,7 @@ export default function StoryChatPage({
   }, []);
 
   return (
-    <div className="h-screen flex flex-col p-4 overflow-hidden max-h-screen">
+    <div className="h-screen flex flex-col p-4 overflow-hidden max-h-screen bg-gradient-to-tl from-black via-zinc-800/30 to-black">
       {buttonsVisible && (
         <>
           <div className="w-full max-w-4xl mx-auto flex flex-col mt-20 items-center text-center h-full">
