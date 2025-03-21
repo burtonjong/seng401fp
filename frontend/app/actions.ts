@@ -136,20 +136,3 @@ export const signOutAction = async () => {
   await supabase.auth.signOut();
   return redirect("/");
 };
-
-export const getStoryMessages = async (
-  story_id: string
-): Promise<Message[] | null> => {
-  const supabase = await createClient();
-
-  const { data: messages, error } = await supabase
-    .from("messages")
-    .select("*")
-    .eq("story_id", story_id);
-
-  if (error) {
-    console.error("Error fetching messages:", error);
-    return null;
-  }
-  return messages as Message[] | null;
-};

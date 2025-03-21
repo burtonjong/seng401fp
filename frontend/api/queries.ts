@@ -115,6 +115,25 @@ export async function getUserStories(
   }
 }
 
+export const getStoryMessages = async (
+  story_id: string
+): Promise<Message[] | { error: { message: string }; statusCode: number }> => {
+  try {
+    const response = await fetchApi<Message[]>(`/messages/story/${story_id}`, {
+      method: "GET",
+    });
+    return response;
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+    return {
+      error: {
+        message: `Could not fetch messages: ${error}`,
+      },
+      statusCode: 500,
+    };
+  }
+};
+
 export const getUsername = async (id: string) => {
   try {
     const response = await fetchApi<string>(`/users/username/${id}`, {

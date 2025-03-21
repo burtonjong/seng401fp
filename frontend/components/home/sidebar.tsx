@@ -3,7 +3,7 @@
 import { useState, Dispatch, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
 
-import { ListFilter, Menu, Plus, LogOut, User2 } from "lucide-react";
+import { ListFilter, Menu, Plus, LogOut, User2, Home } from "lucide-react";
 
 import { signOutAction } from "@/app/actions";
 import { createStory, deleteStory } from "@/api/stories/mutations";
@@ -136,6 +136,16 @@ export default function Sidebar({
       </div>
 
       <div className="mt-auto px-4 py-4 space-y-1">
+        <Button
+          variant="ghost"
+          className={`w-full justify-start gap-3 py-2 text-[#e0e0e0] hover:bg-[#2a2a2a] relative ${!sidebarOpen && "justify-center"}`}
+          onClick={() => {
+            router.push("/home");
+          }}
+        >
+          <Home className="h-5 w-5" />
+          {sidebarOpen && <span>Home</span>}
+        </Button>
         <Button
           variant="ghost"
           className={`w-full justify-start gap-3 py-2 text-[#e0e0e0] hover:bg-[#2a2a2a] relative ${!sidebarOpen && "justify-center"}`}

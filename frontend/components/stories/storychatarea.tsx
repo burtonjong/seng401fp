@@ -14,10 +14,10 @@ import {
   createStory,
   updateName,
 } from "@/api/stories/mutations";
-import { getStoryMessages } from "@/app/actions";
-import { Story, User } from "@/types/types";
+import { Message, Story, User } from "@/types/types";
 import Particles from "../ui/particles";
 import { motion } from "framer-motion";
+import { getStoryMessages } from "@/api/queries";
 
 export default function StoryChatPage({
   storyID,
@@ -63,7 +63,7 @@ export default function StoryChatPage({
 
   useEffect(() => {
     const fetchMessages = async () => {
-      const fetchedMessages = await getStoryMessages(storyID);
+      const fetchedMessages = (await getStoryMessages(storyID)) as Message[];
       if (fetchedMessages) {
         const sortedMessages = fetchedMessages.sort((a, b) => {
           return (
@@ -483,7 +483,7 @@ export default function StoryChatPage({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Start an Odyssey"
+            placeholder="Or, start an Odyssey on your own..."
             className="flex-1 bg-transparent border-none outline-none px-3 text-white placeholder-gray-400"
           />
 
