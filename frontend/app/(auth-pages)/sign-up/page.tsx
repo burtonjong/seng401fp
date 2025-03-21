@@ -3,6 +3,7 @@ import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default async function Signup(props: {
@@ -20,6 +21,10 @@ export default async function Signup(props: {
   return (
     <>
       <form className="flex flex-col min-w-64 max-w-64 mx-auto">
+        <div className="size-40 absolute top-0 left-0 mt-4 ml-4 flex">
+          <ArrowLeft />
+          <span className="ml-2 font-medium">Return to Home</span>
+        </div>
         <h1 className="text-2xl font-medium">Sign up</h1>
         <p className="text-sm text text-foreground">
           Already have an account?{" "}

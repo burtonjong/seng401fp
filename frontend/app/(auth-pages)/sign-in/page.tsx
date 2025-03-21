@@ -3,12 +3,17 @@ import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ArrowLeft, ArrowLeftSquare, MoveLeftIcon } from "lucide-react";
 import Link from "next/link";
 
 export default async function Login(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams;
   return (
     <form className="flex-1 flex flex-col min-w-64">
+      <div className="size-40 absolute top-0 left-0 mt-4 ml-4 flex">
+        <ArrowLeft />
+        <span className="ml-2 font-medium">Return to Home</span>
+      </div>
       <h1 className="text-2xl font-medium">Sign in</h1>
       <p className="text-sm text-foreground">
         Don't have an account?{" "}

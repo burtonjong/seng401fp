@@ -1,5 +1,5 @@
 import { fetchApi } from "@/lib/axios";
-import { Story, UserDetails, Message, User } from "@/types/types";
+import { Story, Message, User } from "@/types/types";
 
 type CreateStorySuccess = { success: true; story: Story };
 type CreateStoryError = {
@@ -81,3 +81,23 @@ export async function updateName(params: {
     };
   }
 }
+
+export const deleteStory = async (
+  storyId: string
+): Promise<boolean | { error: { message: string }; statusCode: number }> => {
+  try {
+    const response = await fetchApi(`/stories/${storyId}`, {
+      method: "DELETE",
+    });
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting story:", error);
+    return {
+      error: {
+        message: `Could not delete story: ${error}`,
+      },
+      statusCode: 500,
+    };
+  }
+};
