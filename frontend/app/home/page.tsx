@@ -15,7 +15,7 @@ export default async function Main() {
     return redirect("/sign-in");
   }
 
-  const username = await getUsername(user.id);
+  const username = (await getUsername(user.id)) as string;
   const userId = user.id;
 
   const userObject = (await getUser(userId)) as User;

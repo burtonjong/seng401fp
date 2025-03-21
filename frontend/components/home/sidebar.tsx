@@ -6,8 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ListFilter, Menu, Plus, LogOut, User2 } from "lucide-react";
 
 import { signOutAction } from "@/app/actions";
-import { deleteStory } from "@/app/actions";
-import { createStory } from "@/api/stories/mutations";
+import { createStory, deleteStory } from "@/api/stories/mutations";
 import { useRouter } from "next/navigation";
 import { Story, User } from "@/types/types";
 
@@ -104,7 +103,7 @@ export default function Sidebar({
         <h3 className={`text-sm font-medium mb-2 ${!sidebarOpen && "hidden"}`}>
           Recent
         </h3>
-        {stories && stories.length > 1 ? (
+        {stories && stories.length > 0 ? (
           stories.map((story) => (
             <div key={story.id} className={`flex items-center justify-between`}>
               <Button

@@ -18,7 +18,7 @@ export default async function ProfilePage() {
     return redirect("/sign-in");
   }
 
-  const username = await getUsername(user.id);
+  const username = (await getUsername(user.id)) as string;
 
   // scuffed but its ok
   const userData = (await getUser(user.id)) as User;

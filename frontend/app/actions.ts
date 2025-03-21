@@ -168,17 +168,6 @@ export const getUserStories = async (): Promise<Story[] | null> => {
   return stories;
 };
 
-export const deleteStory = async (storyId: string): Promise<boolean> => {
-  const supabase = await createClient();
-
-  const { data } = (await supabase
-    .from("stories")
-    .delete()
-    .eq("id", storyId)) as { data: { id: string }[] | null };
-
-  return true;
-};
-
 export const getStoryMessages = async (
   story_id: string
 ): Promise<Message[] | null> => {
