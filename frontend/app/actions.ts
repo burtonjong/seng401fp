@@ -137,37 +137,6 @@ export const signOutAction = async () => {
   return redirect("/");
 };
 
-export const getUserDetails = async (): Promise<UserDetails | null> => {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) return null;
-
-  return {
-    id: user.id,
-    username: user.user_metadata?.username,
-    email: user.email,
-  };
-};
-
-export const getUserStories = async (): Promise<Story[] | null> => {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) return null;
-
-  const { data: stories } = await supabase
-    .from("stories")
-    .select("*")
-    .eq("user_id", user.id);
-
-  return stories;
-};
-
 export const getStoryMessages = async (
   story_id: string
 ): Promise<Message[] | null> => {

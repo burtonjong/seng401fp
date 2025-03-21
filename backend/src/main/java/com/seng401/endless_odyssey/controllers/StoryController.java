@@ -44,6 +44,11 @@ public class StoryController {
         }
     } 
 
+    @GetMapping("/user/{userId}")
+    public List<Story> getStoriesByUserId(@PathVariable UUID userId) {
+        return storyRepository.findByUserId(userId);
+    }
+
     @PostMapping
     public Story createStory(@RequestBody Story story) {
         return storyRepository.save(story);

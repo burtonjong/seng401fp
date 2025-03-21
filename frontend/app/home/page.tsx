@@ -16,13 +16,16 @@ export default async function Main() {
   }
 
   const username = (await getUsername(user.id)) as string;
-  const userId = user.id;
 
-  const userObject = (await getUser(userId)) as User;
+  const userObject = (await getUser(user.id)) as User;
 
   return (
     <div className="fixed inset-0 flex bg-black text-white">
-      <HomeContainer userObject={userObject} username={username} />
+      <HomeContainer
+        userObject={userObject}
+        username={username}
+        userId={user.id}
+      />
     </div>
   );
 }
