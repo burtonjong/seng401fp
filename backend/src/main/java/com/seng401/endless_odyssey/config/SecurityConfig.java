@@ -44,13 +44,9 @@ public class SecurityConfig {
                     .requestMatchers("/messages/**").permitAll() // Allow public access to movies endpoints
                     .requestMatchers("/users/**").permitAll() // Allow public access to email endpoints
                     .requestMatchers("/api/achievements/**").permitAll()
+                    .requestMatchers("/actuator/health").permitAll()
                     .anyRequest().authenticated());  // Secure all other routes// Secure all other routes
         return http.build();
     }
 
-    @Bean
-    public void configure(WebSecurity web) throws Exception {
-    web.ignoring()
-            .requestMatchers("/actuator/health");
-    }
 }
